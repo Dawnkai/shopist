@@ -1,0 +1,30 @@
+{
+  "name": "shopist",
+  "version": "1.0.0",
+  "description": "Managing shopping list and creating statistics for saving money made easy.",
+  "source": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "parcel": "parcel",
+    "flask": "flask --app backend/server run"
+  },
+  "keywords": [
+    "shopping",
+    "data science",
+    "cashflow"
+  ],
+  "author": "Maciej Kleban",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "parcel": "^2.9.2",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.7.4",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.13.0"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "process": "^0.11.10"
+  }
+}

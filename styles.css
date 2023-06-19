@@ -1,0 +1,7 @@
+.table-hover tbody:hover{
+	cursor: pointer;
+}
+
+.table-title {
+	background-color: aqua;
+}
