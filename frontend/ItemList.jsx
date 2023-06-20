@@ -13,15 +13,22 @@ import axios from 'axios';
 
 export default function ItemList() {
     const [items, setItems] = useState([]);
+    const [shops, setShops] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [units, setUnits] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState({
-        id: -1,
-        name: "",
-        quantity: 0,
-        price: 0,
-        shop: ""
+        item_id: -1,
+        item_quantity: 0,
+        item_price: 0,
+        item_product: -1,
+        product_name: "",
+        item_unit: -1,
+        unit_name: "",
+        item_shop: -1,
+        shop_name: ""
     });
 
     useEffect(() => {
@@ -29,6 +36,7 @@ export default function ItemList() {
     }, []);
 
     const addItem = () => {
+        fetchModalData();
         setShowAddModal(true);
     }
 
@@ -37,9 +45,31 @@ export default function ItemList() {
         setShowDeleteModal(true);
     }
 
+    const fetchModalData = () => {
+        axios.get('/api/shops').then((result) => setShops(result?.data)).catch((error) => console.log(error));
+        axios.get('/api/units').then((result) => setUnits(result?.data)).catch((error) => console.log(error));
+        axios.get('/api/products').then((result) => setProducts(result?.data)).catch((error) => console.log(error));
+    }
+
     const editItem = (item) => {
+        fetchModalData();
         setSelectedItem(item);
         setShowEditModal(true);
+    }
+
+    const confirmEdit = (editedData) => {
+        axios.put(`/api/items/${editedData?.item_id}`, editedData).then((result) => {
+            setItems(result?.data);
+            setShowEditModal(false);
+        }).catch((error) => console.log(error));
+    }
+
+    const confirmAdd = (newData) => {
+        // axios.post('/api/items', newData).then((result) => {
+        //     setItems(result?.data);
+        //     setShowAddModal(false);
+        // }).catch((error) => console.log(error));
+        console.log(newData);
     }
 
     return (
@@ -67,11 +97,11 @@ export default function ItemList() {
                     <tbody>
                         {
                             items.map((item) => (
-                                <tr key={item?.id}>
-                                    <td>{item?.name}</td>
-                                    <td>{item?.quantity}</td>
-                                    <td>{item?.price} zł</td>
-                                    <td>{item?.shop}</td>
+                                <tr key={item?.item_id}>
+                                    <td>{item?.product_name}</td>
+                                    <td>{item?.item_quantity} {item?.unit_name}</td>
+                                    <td>{item?.item_price} zł</td>
+                                    <td>{item?.shop_name}</td>
                                     <td>
                                         <Button variant="secondary" onClick={() => editItem(item)}>Edit</Button>
                                         <Button variant="danger" onClick={() => deleteItem(item)}>Remove</Button>
@@ -83,9 +113,24 @@ export default function ItemList() {
                     </Table>
                 </Card.Body>
             </Card>
-            <AddModal visible={showAddModal} setVisible={setShowAddModal}/>
+            <AddModal
+                visible={showAddModal}
+                setVisible={setShowAddModal}
+                shops={shops}
+                units={units}
+                products={products}
+                handleSubmit={confirmAdd}
+            />
             <DeleteModal visible={showDeleteModal} setVisible={setShowDeleteModal} selectedItem={selectedItem}/>
-            <EditModal visible={showEditModal} setVisible={setShowEditModal} selectedItem={selectedItem}/>
+            <EditModal 
+                visible={showEditModal}
+                setVisible={setShowEditModal}
+                selectedItem={selectedItem}
+                shops={shops}
+                units={units}
+                products={products}
+                handleSubmit={confirmEdit}
+            />
         </>
     );
 }

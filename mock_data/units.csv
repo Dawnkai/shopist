@@ -1,0 +1,8 @@
+unit_id;unit_display_name;unit_name;unit_num
+0;'kg';'kilograms';1
+1;'g';'grams';1
+2;'l';'liters';1
+3;'600g';'600 grams';600
+4;'dag';'decagrams';1
+5;'bottles';'bootles';1
+6;'units';'units';1
