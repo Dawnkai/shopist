@@ -47,6 +47,15 @@ export default function AddModal({visible, setVisible, shops, units, products, h
         setNewItem(prev => ({...prev, [id_field]: id_value, [display_field]: display_value}));
     }
 
+    const formValid = () => {
+        if (newItem["product_name"] == -1) return false;
+        if (newItem["item_unit"] == -1) return false;
+        if (newItem["item_shop"] == -1) return false;
+        if (newItem["item_quantity"] < 1) return false;
+        if (newItem["item_price"] < 0) return false;
+        return true;
+    }
+
     return (
         <Modal show={visible} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -60,8 +69,11 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                             aria-label="product-select"
                             value={newItem?.product_name}
                             name="product_name"
-                            onChange={(e) => handleChangeAndConvert(e, "item_product", "product_name", products)}
+                            onChange={(e) => {
+                                handleChangeAndConvert(e, "item_product", "product_name", products);
+                            }}
                         >
+                            <option></option>
                             {products.map((product) => <option key={product?.id}>{product?.name}</option>)}
                         </Form.Select>
                     </Form.Group>
@@ -69,7 +81,13 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                         <Form.Group as={Col} controlId="itemForm.QuantityInput">
                             <Form.Label>Quantity</Form.Label>
                             <InputGroup>
-                                <Form.Control type="number" name="item_quantity" value={newItem?.item_quantity} onChange={(e) => handleChange(e)}/>
+                                <Form.Control
+                                    type="number"
+                                    name="item_quantity"
+                                    value={newItem?.item_quantity}
+                                    min={0}
+                                    onChange={(e) => handleChange(e)}
+                                />
                                 <DropdownButton
                                     variant="outline-secondary"
                                     title={newItem?.unit_name}
@@ -91,6 +109,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                                     step="0.01"
                                     lang="en"
                                     name="item_price"
+                                    min={0}
                                     value={newItem?.item_price}
                                     onChange={(e) => handleChange(e)}
                                 />
@@ -106,6 +125,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                             name="shop_name"
                             onChange={(e) => handleChangeAndConvert(e, "item_shop", "shop_name", shops)}
                         >
+                            <option></option>
                             {shops.map((shop) => <option key={shop?.id}>{shop?.name}</option>)}
                         </Form.Select>
                     </Form.Group>
@@ -115,7 +135,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                 <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button variant="success" onClick={() => console.log(newItem)}>
+                <Button variant="success" onClick={() => {if (formValid()) handleSubmit(newItem)}}>
                     Add
                 </Button>
             </Modal.Footer>

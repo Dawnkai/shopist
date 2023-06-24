@@ -24,6 +24,10 @@ def get_units():
 def get_products():
     return jsonify(db.get_products()), 200
 
-@app.route("/api/items/<item_id>", methods=["PUT"])
+@app.route("/api/items/<item_id>", methods=["PUT", "DELETE"])
 def item(item_id):
+    if request.method == "DELETE":
+        if db.delete_item(item_id):
+            return jsonify({"msg": "Item deleted."}), 204
+        return jsonify({"msg": "Unable to delete item."}), 500
     return jsonify(db.edit_item(item_id, request.json)), 200

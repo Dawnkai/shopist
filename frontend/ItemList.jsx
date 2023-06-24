@@ -65,11 +65,19 @@ export default function ItemList() {
     }
 
     const confirmAdd = (newData) => {
-        // axios.post('/api/items', newData).then((result) => {
-        //     setItems(result?.data);
-        //     setShowAddModal(false);
-        // }).catch((error) => console.log(error));
-        console.log(newData);
+        axios.post('/api/items', newData).then((result) => {
+            setItems(result?.data);
+            setShowAddModal(false);
+        }).catch((error) => console.log(error));
+    }
+
+    const confirmDelete = (itemId) => {
+        axios.delete(`/api/items/${itemId}`).then((result) => {
+            if (result.status == 204) {
+                setItems(items.filter((item) => item["item_id"] != itemId));
+                setShowDeleteModal(false);
+            }
+        }).catch((error) => console.log(error));
     }
 
     return (
@@ -121,7 +129,12 @@ export default function ItemList() {
                 products={products}
                 handleSubmit={confirmAdd}
             />
-            <DeleteModal visible={showDeleteModal} setVisible={setShowDeleteModal} selectedItem={selectedItem}/>
+            <DeleteModal
+                visible={showDeleteModal}
+                setVisible={setShowDeleteModal}
+                selectedItem={selectedItem}
+                handleSubmit={confirmDelete}
+            />
             <EditModal 
                 visible={showEditModal}
                 setVisible={setShowEditModal}

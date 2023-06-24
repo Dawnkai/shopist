@@ -103,3 +103,9 @@ class SqliteDatabase:
             cur.execute(query, values)
             conn.commit()
         return self.get_items()
+    
+    def delete_item(self, item_id : int) -> bool:
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            cur.execute("DELETE FROM Items WHERE item_id = ?", [item_id])
+            conn.commit()
+        return True
