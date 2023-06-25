@@ -35,20 +35,15 @@ export default function ItemList() {
         axios.get('/api/items').then((result) => setItems(result?.data)).catch((error) => console.log(error));
     }, []);
 
-    const addItem = () => {
-        fetchModalData();
-        setShowAddModal(true);
-    }
-
-    const deleteItem = (item) => {
-        setSelectedItem(item);
-        setShowDeleteModal(true);
-    }
-
     const fetchModalData = () => {
         axios.get('/api/shops').then((result) => setShops(result?.data)).catch((error) => console.log(error));
         axios.get('/api/units').then((result) => setUnits(result?.data)).catch((error) => console.log(error));
         axios.get('/api/products').then((result) => setProducts(result?.data)).catch((error) => console.log(error));
+    }
+
+    const addItem = () => {
+        fetchModalData();
+        setShowAddModal(true);
     }
 
     const editItem = (item) => {
@@ -57,17 +52,22 @@ export default function ItemList() {
         setShowEditModal(true);
     }
 
-    const confirmEdit = (editedData) => {
-        axios.put(`/api/items/${editedData?.item_id}`, editedData).then((result) => {
-            setItems(result?.data);
-            setShowEditModal(false);
-        }).catch((error) => console.log(error));
+    const deleteItem = (item) => {
+        setSelectedItem(item);
+        setShowDeleteModal(true);
     }
 
     const confirmAdd = (newData) => {
         axios.post('/api/items', newData).then((result) => {
             setItems(result?.data);
             setShowAddModal(false);
+        }).catch((error) => console.log(error));
+    }
+
+    const confirmEdit = (editedData) => {
+        axios.put(`/api/items/${editedData?.item_id}`, editedData).then((result) => {
+            setItems(result?.data);
+            setShowEditModal(false);
         }).catch((error) => console.log(error));
     }
 

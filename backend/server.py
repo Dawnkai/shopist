@@ -12,8 +12,10 @@ def items():
         return jsonify(db.add_item(request.json)), 201
     return jsonify(db.get_items()), 200
 
-@app.route("/api/shops", methods=["GET"])
-def get_shops():
+@app.route("/api/shops", methods=["GET", "POST"])
+def shops():
+    if request.method == "POST":
+        return jsonify(db.add_shop(request.json)), 201
     return jsonify(db.get_shops()), 200
 
 @app.route("/api/units", methods=["GET"])
@@ -31,3 +33,11 @@ def item(item_id):
             return jsonify({"msg": "Item deleted."}), 204
         return jsonify({"msg": "Unable to delete item."}), 500
     return jsonify(db.edit_item(item_id, request.json)), 200
+
+@app.route("/api/shops/<shop_id>", methods=["PUT", "DELETE"])
+def shop(shop_id):
+    if request.method == "DELETE":
+        if db.delete_shop(shop_id):
+            return jsonify({"msg": "Shop deleted."}), 204
+        return jsonify({"msg": "Unable to delete shop."}), 500
+    return jsonify(db.edit_shop(shop_id, request.json)), 200

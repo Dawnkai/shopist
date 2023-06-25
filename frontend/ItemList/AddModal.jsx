@@ -10,19 +10,6 @@ import Row from 'react-bootstrap/Row';
 
 export default function AddModal({visible, setVisible, shops, units, products, handleSubmit}) {
 
-    useEffect(() => {
-        setNewItem({
-            item_quantity: 0,
-            item_price: 0,
-            product_name: products[0] !== undefined ? products[0]["id"] : -1,
-            item_product: products[0] !== undefined ? products[0]["name"] : "",
-            item_unit: units[0] !== undefined ? units[0]["id"] : -1,
-            unit_name: units[0] !== undefined ? units[0]["name"] : "",
-            item_shop: shops[0] !== undefined ? shops[0]["id"] : -1,
-            shop_name: shops[0] !== undefined ? shops[0]["name"] : ""
-        });
-    }, [visible])
-
     const [newItem, setNewItem] = useState({
         item_quantity: 0,
         item_price: 0,
@@ -34,6 +21,19 @@ export default function AddModal({visible, setVisible, shops, units, products, h
         shop_name: shops[0] !== undefined ? shops[0]["name"] : ""
     });
 
+    useEffect(() => {
+        setNewItem({
+            item_quantity: 0,
+            item_price: 0,
+            product_name: products[0] !== undefined ? products[0]["id"] : -1,
+            item_product: products[0] !== undefined ? products[0]["name"] : "",
+            item_unit: units[0] !== undefined ? units[0]["id"] : -1,
+            unit_name: units[0] !== undefined ? units[0]["name"] : "",
+            item_shop: shops[0] !== undefined ? shops[0]["id"] : -1,
+            shop_name: shops[0] !== undefined ? shops[0]["name"] : ""
+        });
+    }, [visible]);
+
     const handleClose = () => setVisible(false);
 
     const handleChange = (e) => {
@@ -41,16 +41,20 @@ export default function AddModal({visible, setVisible, shops, units, products, h
     }
 
     // Update field with display value and also update the field with id of said display value
-    const handleChangeAndConvert = (e, id_field, display_field, source) => {
+    // id_field_name - name of id field in current state
+    // display_field_name - name of display field connected to id field in current state
+    // source_field - name of the id field in the SOURCE (shop_id, product_id, etc)
+    // source - data used to fill the fields in current state (products, shops, etc)
+    const handleChangeAndConvert = (e, id_field_name, display_field_name, source_field, source) => {
         const display_value = e.target.name === "unit_name" ? e.target.textContent : e.target.value;
-        const id_value = source.filter(value => value.name == display_value)[0]["id"];
-        setNewItem(prev => ({...prev, [id_field]: id_value, [display_field]: display_value}));
+        const id_value = source.filter(value => value.name == display_value)[0][source_field];
+        setItem(prev => ({...prev, [id_field_name]: id_value, [display_field_name]: display_value}));
     }
 
     const formValid = () => {
-        if (newItem["product_name"] == -1) return false;
-        if (newItem["item_unit"] == -1) return false;
-        if (newItem["item_shop"] == -1) return false;
+        if (newItem["product_name"] === -1) return false;
+        if (newItem["item_unit"] === -1) return false;
+        if (newItem["item_shop"] === -1) return false;
         if (newItem["item_quantity"] < 1) return false;
         if (newItem["item_price"] < 0) return false;
         return true;
@@ -70,7 +74,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                             value={newItem?.product_name}
                             name="product_name"
                             onChange={(e) => {
-                                handleChangeAndConvert(e, "item_product", "product_name", products);
+                                handleChangeAndConvert(e, "item_product", "product_name", "product_id", products);
                             }}
                         >
                             <option></option>
@@ -96,7 +100,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                                     <Dropdown.Item
                                         key={unit?.id}
                                         name="unit_name"
-                                        onClick={(e) => handleChangeAndConvert(e, "item_unit", "unit_name", units)}
+                                        onClick={(e) => handleChangeAndConvert(e, "item_unit", "unit_name", "unit_id", units)}
                                     >{unit?.name}</Dropdown.Item>)}
                                 </DropdownButton>
                             </InputGroup>
@@ -123,7 +127,7 @@ export default function AddModal({visible, setVisible, shops, units, products, h
                             aria-label="shop-select"
                             value={newItem?.shop_name}
                             name="shop_name"
-                            onChange={(e) => handleChangeAndConvert(e, "item_shop", "shop_name", shops)}
+                            onChange={(e) => handleChangeAndConvert(e, "item_shop", "shop_name", "shop_id", shops)}
                         >
                             <option></option>
                             {shops.map((shop) => <option key={shop?.id}>{shop?.name}</option>)}
