@@ -65,11 +65,36 @@ class SqliteDatabase:
 
     def get_shops(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
-            cur.execute("SELECT shop_id, shop_display_name FROM Shops")
+            cur.execute("SELECT * FROM Shops")
             result = []
             for row in cur.fetchall():
-                result.append(dict(zip(["id", "name"], row)))
+                result.append(dict(zip(["shop_id", "shop_display_name", "shop_name",
+                                        "shop_description", "shop_address"], row)))
             return result
+    
+    def add_shop(self, shop_data : dict) -> list:
+        fields = ["shop_display_name", "shop_name", "shop_description", "shop_address"]
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_insert_query("Shops", fields, shop_data)
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_shops()
+    
+    def edit_shop(self, shop_id : int, shop_data : dict) -> list:
+        fields = ["shop_id", "shop_display_name", "shop_name", "shop_description",
+                  "shop_address"]
+        shop_data["shop_id"] = shop_id
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_update_query("Shops", fields, shop_data, "shop_id")
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_shops()
+    
+    def delete_shop(self, shop_id : int) -> bool:
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            cur.execute("DELETE FROM Shops WHERE shop_id = ?", [shop_id])
+            conn.commit()
+        return True
 
     def get_units(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
