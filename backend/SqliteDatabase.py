@@ -48,21 +48,6 @@ class SqliteDatabase:
         insert_query = f"{insert_query[:-1]}) VALUES ({'?,' * (len(values)-1)}?)"
         return insert_query, values
 
-    def get_items(self) -> list:
-        with SqliteContext(self.dbpath) as [_, cur]:
-            cur.execute("SELECT i.item_id, i.item_quantity, i.item_price, i.item_product, p.product_name, "
-                        "i.item_unit, u.unit_display_name, i.item_shop, s.shop_display_name "
-                        "FROM Items i, Products p, Units u, Shops s "
-                        "WHERE i.item_product = p.product_id AND i.item_unit = u.unit_id "
-                        "AND i.item_shop = s.shop_id")
-            result = []
-            for row in cur.fetchall():
-                result.append(dict(zip([
-                    "item_id", "item_quantity", "item_price", "item_product",
-                    "product_name", "item_unit", "unit_name", "item_shop", "shop_name"
-                ], row)))
-            return result
-
     def get_shops(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
             cur.execute("SELECT * FROM Shops")
@@ -130,25 +115,64 @@ class SqliteDatabase:
     
     def get_products(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
-            cur.execute("SELECT product_id, product_name FROM Products")
+            cur.execute("SELECT * FROM Products")
             result = []
             for row in cur.fetchall():
-                result.append(dict(zip(["id", "name"], row)))
+                result.append(dict(zip(["product_id", "product_name",
+                                        "product_description"], row)))
             return result
+    
+    def add_product(self, product_data : dict) -> list:
+        fields = ["product_name", "product_description"]
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_insert_query("Products", fields, product_data)
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_products()
+    
+    def edit_product(self, product_id : int, product_data : dict) -> list:
+        fields = ["product_id", "product_name", "product_description"]
+        product_data["product_id"] = product_id
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_update_query("Products", fields, product_data, "product_id")
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_products()
+    
+    def delete_product(self, product_id : int) -> bool:
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            cur.execute("DELETE FROM Products WHERE product_id = ?", [product_id])
+            conn.commit()
+        return True
+    
+    def get_items(self) -> list:
+        with SqliteContext(self.dbpath) as [_, cur]:
+            cur.execute("SELECT i.item_id, i.item_quantity, i.item_price, i.item_product, p.product_name, "
+                        "i.item_unit, u.unit_display_name, i.item_shop, s.shop_display_name "
+                        "FROM Items i, Products p, Units u, Shops s "
+                        "WHERE i.item_product = p.product_id AND i.item_unit = u.unit_id "
+                        "AND i.item_shop = s.shop_id")
+            result = []
+            for row in cur.fetchall():
+                result.append(dict(zip([
+                    "item_id", "item_quantity", "item_price", "item_product",
+                    "product_name", "item_unit", "unit_name", "item_shop", "shop_name"
+                ], row)))
+            return result
+    
+    def add_item(self, item_data : dict) -> list:
+        fields = ["item_price", "item_product", "item_quantity", "item_shop", "item_unit"]
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_insert_query("Items", fields, item_data)
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_items()
     
     def edit_item(self, item_id : int, item_data : dict) -> list:
         fields = ["item_id", "item_price", "item_product", "item_quantity", "item_shop", "item_unit"]
         item_data["item_id"] = item_id
         with SqliteContext(self.dbpath) as [conn, cur]:
             query, values = self.get_update_query("Items", fields, item_data, "item_id")
-            cur.execute(query, values)
-            conn.commit()
-        return self.get_items()
-    
-    def add_item(self, item_data : dict) -> list:
-        fields = ["item_price", "item_product", "item_quantity", "item_shop", "item_unit"]
-        with SqliteContext(self.dbpath) as [conn, cur]:
-            query, values = self.get_insert_query("Items", fields, item_data)
             cur.execute(query, values)
             conn.commit()
         return self.get_items()

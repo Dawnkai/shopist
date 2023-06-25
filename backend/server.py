@@ -24,8 +24,10 @@ def units():
         return jsonify(db.add_unit(request.json)), 201
     return jsonify(db.get_units()), 200
 
-@app.route("/api/products", methods=["GET"])
-def get_products():
+@app.route("/api/products", methods=["GET", "POST"])
+def products():
+    if request.method == "POST":
+        return jsonify(db.add_product(request.json)), 201
     return jsonify(db.get_products()), 200
 
 @app.route("/api/items/<item_id>", methods=["PUT", "DELETE"])
@@ -51,3 +53,11 @@ def unit(unit_id):
             return jsonify({"msg": "Unit deleted."}), 204
         return jsonify({"msg": "Unable to delete unit."}), 500
     return jsonify(db.edit_unit(unit_id, request.json)), 200
+
+@app.route("/api/products/<product_id>", methods=["PUT", "DELETE"])
+def product(product_id):
+    if request.method == "DELETE":
+        if db.delete_product(product_id):
+            return jsonify({"msg": "Product deleted."}), 204
+        return jsonify({"msg": "Unable to delete product."}), 500
+    return jsonify(db.edit_product(product_id, request.json)), 200
