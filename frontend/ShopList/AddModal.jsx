@@ -46,6 +46,7 @@ export default function AddModal({visible, setVisible, handleSubmit}) {
                             type="text"
                             placeholder="Shop name"
                             name="shop_display_name"
+                            value={newShop.shop_display_name}
                             onChange={(e) => handleChange(e)}
                         />
                     </Form.Group>
@@ -55,6 +56,7 @@ export default function AddModal({visible, setVisible, handleSubmit}) {
                             type="text"
                             placeholder="Shop full name"
                             name="shop_name"
+                            value={newShop.shop_name}
                             onChange={(e) => handleChange(e)}
                         />
                     </Form.Group>
@@ -65,6 +67,7 @@ export default function AddModal({visible, setVisible, handleSubmit}) {
                             rows={3}
                             name="shop_description"
                             maxLength="250"
+                            value={newShop.shop_description}
                             onChange={(e) => handleChange(e)}
                         />
                     </Form.Group>
@@ -74,6 +77,7 @@ export default function AddModal({visible, setVisible, handleSubmit}) {
                             type="text"
                             placeholder="Shop address"
                             name="shop_address"
+                            value={newShop.shop_address}
                             onChange={(e) => handleChange(e)}
                         />
                     </Form.Group>

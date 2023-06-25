@@ -98,11 +98,35 @@ class SqliteDatabase:
 
     def get_units(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
-            cur.execute("SELECT unit_id, unit_display_name FROM Units")
+            cur.execute("SELECT * FROM Units")
             result = []
             for row in cur.fetchall():
-                result.append(dict(zip(["id", "name"], row)))
+                result.append(dict(zip(["unit_id", "unit_display_name",
+                                        "unit_name", "unit_num"], row)))
             return result
+    
+    def add_unit(self, unit_data : dict) -> list:
+        fields = ["unit_display_name", "unit_name", "unit_num"]
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_insert_query("Units", fields, unit_data)
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_units()
+    
+    def edit_unit(self, unit_id : int, unit_data : dict) -> list:
+        fields = ["unit_id", "unit_display_name", "unit_name", "unit_num"]
+        unit_data["unit_id"] = unit_id
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            query, values = self.get_update_query("units", fields, unit_data, "unit_id")
+            cur.execute(query, values)
+            conn.commit()
+        return self.get_units()
+    
+    def delete_unit(self, unit_id : int) -> bool:
+        with SqliteContext(self.dbpath) as [conn, cur]:
+            cur.execute("DELETE FROM Units WHERE unit_id = ?", [unit_id])
+            conn.commit()
+        return True
     
     def get_products(self) -> list:
         with SqliteContext(self.dbpath) as [_, cur]:
