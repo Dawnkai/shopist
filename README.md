@@ -17,7 +17,7 @@ $ pip install Flask
 ```bash
 $ npm run flask
 ```
-4. Run the frontent using the following command:
+4. Run the frontend using the following command:
 ```bash
 $ npm run parcel
 ```
