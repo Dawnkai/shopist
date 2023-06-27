@@ -16,6 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 import createDatabase from '../backend/createDatabase';
+import fetchItems from '../backend/fetchItems';
 import fetchProducts from '../backend/fetchProducts';
 import fetchShops from '../backend/fetchShops';
 import fetchUnits from '../backend/fetchUnits';
@@ -29,6 +30,10 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('fetch-items', async (event, arg) => {
+  event.reply('fetch-items', await fetchItems("database.db"));
+})
 
 ipcMain.on('fetch-units', async (event, arg) => {
   event.reply('fetch-units', await fetchUnits("database.db"));

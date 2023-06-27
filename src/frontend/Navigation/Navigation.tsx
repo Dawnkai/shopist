@@ -22,7 +22,10 @@ export default function Navigation() {
     return (
         <Nav variant="tabs" defaultActiveKey="/">
         <Nav.Item>
-            <Nav.Link href="/">Items</Nav.Link>
+            <LinkWithRouter
+                href="/items"
+                title="Items"
+            />
         </Nav.Item>
         <Nav.Item>
             <LinkWithRouter

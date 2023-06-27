@@ -1,6 +1,14 @@
+import Item from './Item';
 import Product from './Product';
 import Shop from './Shop';
 import Unit from './Unit';
+
+export type DeleteItemModalProps = {
+    visible: boolean,
+    setVisible: (arg : boolean) => void,
+    selectedItem: Item,
+    handleSubmit: (arg : number) => void
+}
 
 export type DeleteProductModalProps = {
     visible: boolean,
