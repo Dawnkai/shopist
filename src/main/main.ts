@@ -15,6 +15,9 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
+import createDatabase from '../backend/createDatabase';
+import fetchUnits from '../backend/fetchUnits';
+
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -25,10 +28,8 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.on('fetch-units', async (event, arg) => {
+  event.reply('fetch-units', await fetchUnits("database.db"));
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -128,6 +129,7 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+    createDatabase("database.db");
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
