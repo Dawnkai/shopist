@@ -34,3 +34,5 @@ $ python script.py
 * Statistics and plots
 
 Other, non-essential bugs and enchancements are listed in the issues, [here](https://github.com/Dawnkai/shopist/issues).
+
+Built with MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate).
