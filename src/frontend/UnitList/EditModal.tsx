@@ -3,11 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
-import EditModalProps from '../../types/EditModalProps';
+import { EditUnitModalProps} from '../../types/EditModalProps';
 import FormControlElement from '../../types/FormControlElement';
 import Unit from '../../types/Unit';
 
-export default function EditModal({visible, setVisible, selectedObject, handleSubmit}:EditModalProps) {
+export default function EditModal({visible, setVisible, selectedUnit, handleSubmit}:EditUnitModalProps) {
 
     const [unit, setUnit] = useState<Unit>({
         unit_id: -1,
@@ -17,7 +17,7 @@ export default function EditModal({visible, setVisible, selectedObject, handleSu
     });
 
     useEffect(() => {
-        setUnit(selectedObject);
+        setUnit(selectedUnit);
     }, [visible]);
 
     const handleClose = () => setVisible(false);

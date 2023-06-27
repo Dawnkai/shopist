@@ -1,10 +1,24 @@
+import Product from './Product';
+import Shop from './Shop';
 import Unit from './Unit';
 
-type EditModalProps = {
+export type EditProductModalProps = {
     visible: boolean,
     setVisible: (arg : boolean) => void,
-    selectedObject: Unit,
-    handleSubmit: (arg : Unit) => void
+    selectedProduct: Product,
+    handleSubmit: (arg : Product) => void
 }
 
-export default EditModalProps;
+export type EditShopModalProps = {
+    visible: boolean,
+    setVisible: (arg : boolean) => void,
+    selectedShop: Shop,
+    handleSubmit: (arg : Shop) => void
+}
+
+export type EditUnitModalProps = {
+    visible: boolean,
+    setVisible: (arg : boolean) => void,
+    selectedUnit: Unit,
+    handleSubmit: (arg : Unit) => void
+}

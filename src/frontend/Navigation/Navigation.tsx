@@ -25,10 +25,16 @@ export default function Navigation() {
             <Nav.Link href="/">Items</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-            <Nav.Link href="/products">Products</Nav.Link>
+            <LinkWithRouter
+                href="/products"
+                title="Products"
+            />
         </Nav.Item>
         <Nav.Item>
-            <Nav.Link href="/shops">Shops</Nav.Link>
+            <LinkWithRouter
+                href="/shops"
+                title="Shops"
+            />
         </Nav.Item>
         <Nav.Item>
             <LinkWithRouter

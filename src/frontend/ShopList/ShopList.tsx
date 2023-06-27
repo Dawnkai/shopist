@@ -4,56 +4,56 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-import Unit from '../../types/Unit';
+import Shop from '../../types/Shop';
 
 import AddModal from './AddModal';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
 
-
-export default function UnitList() {
-    const [units, setUnits] = useState<Unit[]>([] as Unit[]);
+export default function ShopList() {
+    const [shops, setShops] = useState<Shop[]>([] as Shop[]);
     const [showAddModal, setShowAddModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
-    const [selectedUnit, setSelectedUnit] = useState<Unit>({
-        unit_id: -1,
-        unit_display_name: "",
-        unit_name: "",
-        unit_num: 0
+    const [selectedShop, setSelectedShop] = useState<Shop>({
+        shop_id: -1,
+        shop_display_name: "",
+        shop_name: "",
+        shop_description: "",
+        shop_address: ""
     });
 
     useEffect(() => {
-        window.electron.ipcRenderer.once('fetch-units', (units) => {
-            setUnits(units as Unit[]);
+        window.electron.ipcRenderer.once('fetch-shops', (shops) => {
+            setShops(shops as Shop[]);
         });
-        window.electron.ipcRenderer.sendMessage('fetch-units', []);
+        window.electron.ipcRenderer.sendMessage('fetch-shops', []);
     }, []);
 
-    const addUnit = () => {
+    const addShop = () => {
         setShowAddModal(true);
     }
 
-    const deleteUnit = (unit : Unit) => {
-        setSelectedUnit(unit);
-        setShowDeleteModal(true);
-    }
-
-    const editUnit = (unit : Unit) => {
-        setSelectedUnit(unit);
+    const editShop = (shop : Shop) => {
+        setSelectedShop(shop);
         setShowEditModal(true);
     }
 
-    const confirmAdd = (newUnit : Unit) => {
-        console.log(newUnit);
+    const deleteShop = (shop : Shop) => {
+        setSelectedShop(shop);
+        setShowDeleteModal(true);
     }
 
-    const confirmDelete = (unitId : number) => {
-        console.log(unitId);
+    const confirmAdd = (newShop : Shop) => {
+        console.log(newShop);
     }
 
-    const confirmEdit = (editedUnit : Unit) => {
-        console.log(editedUnit);
+    const confirmEdit = (editedShop : Shop) => {
+        console.log(editedShop);
+    }
+
+    const confirmDelete = (shopId : number) => {
+        console.log(shopId);
     }
 
     return (
@@ -61,10 +61,10 @@ export default function UnitList() {
             <Card>
                 <Card.Header className="text-white bg-primary">
                     <div className="float-start">
-                        <h3>List of <b>Units</b></h3>
+                        <h3>List of <b>Shops</b></h3>
                     </div>
                     <div className="float-end">
-                        <Button variant="success" onClick={addUnit}>Add New Unit</Button>
+                        <Button variant="success" onClick={addShop}>Add New Shop</Button>
                     </div>
                 </Card.Header>
                 <Card.Body>
@@ -73,20 +73,22 @@ export default function UnitList() {
                         <tr>
                             <td>Name</td>
                             <td>Full name</td>
-                            <td>Numerical value</td>
+                            <td>Description</td>
+                            <td>Address</td>
                             <td></td>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            units.map((unit) => (
-                                <tr key={unit?.unit_id}>
-                                    <td>{unit?.unit_display_name}</td>
-                                    <td>{unit?.unit_name}</td>
-                                    <td>{unit?.unit_num}</td>
+                            shops.map((shop) => (
+                                <tr key={shop?.shop_id}>
+                                    <td>{shop?.shop_display_name}</td>
+                                    <td>{shop?.shop_name}</td>
+                                    <td>{shop?.shop_description}</td>
+                                    <td>{shop?.shop_address}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editUnit(unit)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteUnit(unit)}>Delete</Button>
+                                        <Button variant="secondary" onClick={() => editShop(shop)}>Edit</Button>
+                                        <Button variant="danger" onClick={() => deleteShop(shop)}>Remove</Button>
                                     </td>
                                 </tr>
                             ))
@@ -103,13 +105,13 @@ export default function UnitList() {
             <DeleteModal
                 visible={showDeleteModal}
                 setVisible={setShowDeleteModal}
-                selectedUnit={selectedUnit}
+                selectedShop={selectedShop}
                 handleSubmit={confirmDelete}
             />
             <EditModal
                 visible={showEditModal}
                 setVisible={setShowEditModal}
-                selectedUnit={selectedUnit}
+                selectedShop={selectedShop}
                 handleSubmit={confirmEdit}
             />
         </>

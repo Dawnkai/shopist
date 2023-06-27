@@ -3,32 +3,36 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 
-import { DeleteUnitModalProps } from '../../types/DeleteModalProps';
+import { DeleteShopModalProps } from '../../types/DeleteModalProps';
 
-export default function DeleteModal({visible, setVisible, selectedUnit, handleSubmit}:DeleteUnitModalProps) {
+export default function DeleteModal({visible, setVisible, selectedShop, handleSubmit}:DeleteShopModalProps) {
     const handleClose = () => setVisible(false);
 
     return (
         <Modal show={visible} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Delete unit</Modal.Title>
+                <Modal.Title>Delete shop</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to delete this unit?
+                Are you sure you want to delete this shop?
                 <hr className="hr"/>
                 <Table striped bordered size="sm">
                     <tbody>
                         <tr>
                             <td><b>Name</b></td>
-                            <td>{selectedUnit.unit_display_name}</td>
+                            <td>{selectedShop.shop_display_name}</td>
                         </tr>
                         <tr>
                             <td><b>Full name</b></td>
-                            <td>{selectedUnit.unit_name}</td>
+                            <td>{selectedShop.shop_name}</td>
                         </tr>
                         <tr>
-                            <td><b>Numerical value</b></td>
-                            <td>{selectedUnit.unit_num}</td>
+                            <td><b>Description</b></td>
+                            <td>{selectedShop.shop_description}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Address</b></td>
+                            <td>{selectedShop.shop_address}</td>
                         </tr>
                     </tbody>
                 </Table>
@@ -40,8 +44,8 @@ export default function DeleteModal({visible, setVisible, selectedUnit, handleSu
                 <Button
                     variant="danger"
                     onClick={() => {
-                        if (selectedUnit?.unit_id !== undefined)
-                        handleSubmit(selectedUnit.unit_id)
+                        if (selectedShop?.shop_id !== undefined)
+                        handleSubmit(selectedShop.shop_id)
                     }}
                 >
                     Confirm

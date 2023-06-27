@@ -1,9 +1,9 @@
-import Unit from '../types/Unit';
+import Shop from '../types/Shop';
 
-export default async function fetchUnits(dbPath : string) {
+export default async function fetchShops(dbPath : string) {
     const sqlite3 = require("sqlite3").verbose();
 
-    let result : Unit[] = [];
+    let result : Shop[] = [];
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -13,7 +13,7 @@ export default async function fetchUnits(dbPath : string) {
 
     try {
         result = await new Promise((resolve, reject) => {
-            db.all("SELECT * FROM Units", (err : any, rows : Unit[]) => {
+            db.all("SELECT * FROM Shops", (err : any, rows : Shop[]) => {
                 if (err) {
                     reject(err);
                 } else {

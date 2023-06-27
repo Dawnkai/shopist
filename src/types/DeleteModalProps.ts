@@ -1,10 +1,24 @@
+import Product from './Product';
+import Shop from './Shop';
 import Unit from './Unit';
 
-type DeleteModalProps = {
+export type DeleteProductModalProps = {
     visible: boolean,
     setVisible: (arg : boolean) => void,
-    selectedObject: Unit,
+    selectedProduct: Product,
     handleSubmit: (arg : number) => void
 }
 
-export default DeleteModalProps;
+export type DeleteShopModalProps = {
+    visible: boolean,
+    setVisible: (arg : boolean) => void,
+    selectedShop: Shop,
+    handleSubmit: (arg : number) => void
+}
+
+export type DeleteUnitModalProps = {
+    visible: boolean,
+    setVisible: (arg : boolean) => void,
+    selectedUnit: Unit,
+    handleSubmit: (arg : number) => void
+}

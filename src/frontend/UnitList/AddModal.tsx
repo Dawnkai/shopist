@@ -3,11 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
-import AddModalProps from '../../types/AddModalProps';
+import { AddUnitModalProps } from '../../types/AddModalProps';
 import FormControlElement from '../../types/FormControlElement';
 import Unit from '../../types/Unit';
 
-export default function AddModal({visible, setVisible, handleSubmit}:AddModalProps) {
+export default function AddModal({visible, setVisible, handleSubmit}:AddUnitModalProps) {
     const [newUnit, setNewUnit] = useState<Unit>({
         unit_display_name: "",
         unit_name: "",

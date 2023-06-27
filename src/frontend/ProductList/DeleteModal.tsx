@@ -3,32 +3,28 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 
-import { DeleteUnitModalProps } from '../../types/DeleteModalProps';
+import { DeleteProductModalProps } from '../../types/DeleteModalProps';
 
-export default function DeleteModal({visible, setVisible, selectedUnit, handleSubmit}:DeleteUnitModalProps) {
+export default function DeleteModal({visible, setVisible, selectedProduct, handleSubmit}:DeleteProductModalProps) {
     const handleClose = () => setVisible(false);
 
     return (
         <Modal show={visible} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Delete unit</Modal.Title>
+                <Modal.Title>Delete product</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to delete this unit?
+                Are you sure you want to delete this product?
                 <hr className="hr"/>
                 <Table striped bordered size="sm">
                     <tbody>
                         <tr>
                             <td><b>Name</b></td>
-                            <td>{selectedUnit.unit_display_name}</td>
+                            <td>{selectedProduct.product_name}</td>
                         </tr>
                         <tr>
-                            <td><b>Full name</b></td>
-                            <td>{selectedUnit.unit_name}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Numerical value</b></td>
-                            <td>{selectedUnit.unit_num}</td>
+                            <td><b>Description</b></td>
+                            <td>{selectedProduct.product_description}</td>
                         </tr>
                     </tbody>
                 </Table>
@@ -40,8 +36,8 @@ export default function DeleteModal({visible, setVisible, selectedUnit, handleSu
                 <Button
                     variant="danger"
                     onClick={() => {
-                        if (selectedUnit?.unit_id !== undefined)
-                        handleSubmit(selectedUnit.unit_id)
+                        if (selectedProduct?.product_id !== undefined)
+                        handleSubmit(selectedProduct.product_id)
                     }}
                 >
                     Confirm

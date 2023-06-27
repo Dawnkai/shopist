@@ -4,56 +4,54 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-import Unit from '../../types/Unit';
+import Product from '../../types/Product';
 
 import AddModal from './AddModal';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
 
-
-export default function UnitList() {
-    const [units, setUnits] = useState<Unit[]>([] as Unit[]);
+export default function ProductList() {
+    const [products, setProducts] = useState<Product[]>([] as Product[]);
     const [showAddModal, setShowAddModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
-    const [selectedUnit, setSelectedUnit] = useState<Unit>({
-        unit_id: -1,
-        unit_display_name: "",
-        unit_name: "",
-        unit_num: 0
+    const [selectedProduct, setSelectedProduct] = useState<Product>({
+        product_id: -1,
+        product_name: "",
+        product_description: ""
     });
 
     useEffect(() => {
-        window.electron.ipcRenderer.once('fetch-units', (units) => {
-            setUnits(units as Unit[]);
+        window.electron.ipcRenderer.once('fetch-products', (products) => {
+            setProducts(products as Product[]);
         });
-        window.electron.ipcRenderer.sendMessage('fetch-units', []);
+        window.electron.ipcRenderer.sendMessage('fetch-products', []);
     }, []);
 
-    const addUnit = () => {
+    const addProduct = () => {
         setShowAddModal(true);
     }
 
-    const deleteUnit = (unit : Unit) => {
-        setSelectedUnit(unit);
+    const deleteProduct = (product : Product) => {
+        setSelectedProduct(product);
         setShowDeleteModal(true);
     }
 
-    const editUnit = (unit : Unit) => {
-        setSelectedUnit(unit);
+    const editProduct = (product : Product) => {
+        setSelectedProduct(product);
         setShowEditModal(true);
     }
 
-    const confirmAdd = (newUnit : Unit) => {
-        console.log(newUnit);
+    const confirmAdd = (newProduct : Product) => {
+        console.log(newProduct);
     }
 
-    const confirmDelete = (unitId : number) => {
-        console.log(unitId);
+    const confirmDelete = (productId : number) => {
+        console.log(productId);
     }
 
-    const confirmEdit = (editedUnit : Unit) => {
-        console.log(editedUnit);
+    const confirmEdit = (editedProduct : Product) => {
+        console.log(editedProduct);
     }
 
     return (
@@ -61,10 +59,10 @@ export default function UnitList() {
             <Card>
                 <Card.Header className="text-white bg-primary">
                     <div className="float-start">
-                        <h3>List of <b>Units</b></h3>
+                        <h3>List of <b>Products</b></h3>
                     </div>
                     <div className="float-end">
-                        <Button variant="success" onClick={addUnit}>Add New Unit</Button>
+                        <Button variant="success" onClick={addProduct}>Add New Product</Button>
                     </div>
                 </Card.Header>
                 <Card.Body>
@@ -72,21 +70,19 @@ export default function UnitList() {
                     <thead className="table-dark">
                         <tr>
                             <td>Name</td>
-                            <td>Full name</td>
-                            <td>Numerical value</td>
+                            <td>Description</td>
                             <td></td>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            units.map((unit) => (
-                                <tr key={unit?.unit_id}>
-                                    <td>{unit?.unit_display_name}</td>
-                                    <td>{unit?.unit_name}</td>
-                                    <td>{unit?.unit_num}</td>
+                            products.map((product) => (
+                                <tr key={product?.product_id}>
+                                    <td>{product?.product_name}</td>
+                                    <td>{product?.product_description}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editUnit(unit)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteUnit(unit)}>Delete</Button>
+                                        <Button variant="secondary" onClick={() => editProduct(product)}>Edit</Button>
+                                        <Button variant="danger" onClick={() => deleteProduct(product)}>Remove</Button>
                                     </td>
                                 </tr>
                             ))
@@ -103,13 +99,13 @@ export default function UnitList() {
             <DeleteModal
                 visible={showDeleteModal}
                 setVisible={setShowDeleteModal}
-                selectedUnit={selectedUnit}
+                selectedProduct={selectedProduct}
                 handleSubmit={confirmDelete}
             />
             <EditModal
                 visible={showEditModal}
                 setVisible={setShowEditModal}
-                selectedUnit={selectedUnit}
+                selectedProduct={selectedProduct}
                 handleSubmit={confirmEdit}
             />
         </>
