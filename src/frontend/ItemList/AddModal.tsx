@@ -22,7 +22,8 @@ export default function AddModal({visible, setVisible, shops, units, products, h
         item_unit: units[0] !== undefined ? units[0].unit_id : -1,
         unit_display_name: units[0] !== undefined ? units[0].unit_display_name : "",
         item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
-        shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : ""
+        shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : "",
+        item_date: ""
     });
 
     useEffect(() => {
@@ -34,7 +35,8 @@ export default function AddModal({visible, setVisible, shops, units, products, h
             item_unit: units[0] !== undefined ? units[0].unit_id : -1,
             unit_display_name: units[0] !== undefined ? units[0].unit_display_name : "",
             item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
-            shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : ""
+            shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : "",
+            item_date: ""
         });
     }, [visible]);
 

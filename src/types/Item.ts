@@ -7,7 +7,8 @@ type Item = {
     item_unit? : number,
     unit_display_name : string,
     item_shop? : number,
-    shop_display_name : string
+    shop_display_name : string,
+    item_date : string
 }
 
 export default Item;

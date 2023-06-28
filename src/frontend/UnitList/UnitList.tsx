@@ -45,15 +45,40 @@ export default function UnitList() {
     }
 
     const confirmAdd = (newUnit : Unit) => {
-        console.log(newUnit);
+        window.electron.ipcRenderer.once('add-unit', (newId) => {
+            const id = newId as number;
+            if (id > -1) {
+                newUnit.unit_id = id;
+                setUnits([...units, newUnit]);
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('add-unit', [newUnit]);
+        setShowAddModal(false);
     }
 
     const confirmDelete = (unitId : number) => {
-        console.log(unitId);
+        window.electron.ipcRenderer.once('delete-unit', (deleted) => {
+            if (deleted) {
+                setUnits(units.filter((unit) => unit.unit_id !== unitId));
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('delete-unit', [unitId]);
+        setShowDeleteModal(false);
     }
 
     const confirmEdit = (editedUnit : Unit) => {
-        console.log(editedUnit);
+        window.electron.ipcRenderer.once('edit-unit', (edited) => {
+            if (edited) {
+                const index = units.findIndex((unit) => unit.unit_id === editedUnit.unit_id);
+                if (index > -1) {
+                    const unitsCopy = [...units];
+                    unitsCopy[index] = editedUnit;
+                    setUnits(unitsCopy);
+                }
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('edit-unit', [editedUnit]);
+        setShowEditModal(false);
     }
 
     return (

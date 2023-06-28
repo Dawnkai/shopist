@@ -1,4 +1,6 @@
-export default function createDatabase(dbPath : string) {
+import { dbPath } from './params';
+
+export default function createDatabase() {
     const sqlite3 = require("sqlite3").verbose();
     const fs = require("fs");
 

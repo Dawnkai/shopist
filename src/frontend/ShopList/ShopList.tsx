@@ -45,15 +45,40 @@ export default function ShopList() {
     }
 
     const confirmAdd = (newShop : Shop) => {
-        console.log(newShop);
+        window.electron.ipcRenderer.once('add-shop', (newId) => {
+            const id = newId as number;
+            if (id > -1) {
+                newShop.shop_id = id;
+                setShops([...shops, newShop]);
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('add-shop', [newShop]);
+        setShowAddModal(false);
     }
 
     const confirmEdit = (editedShop : Shop) => {
-        console.log(editedShop);
+        window.electron.ipcRenderer.once('edit-shop', (edited) => {
+            if (edited) {
+                const index = shops.findIndex((shop) => shop.shop_id === editedShop.shop_id);
+                if (index > -1) {
+                    const shopsCopy = [...shops];
+                    shopsCopy[index] = editedShop;
+                    setShops(shopsCopy);
+                }
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('edit-shop', [editedShop]);
+        setShowEditModal(false);
     }
 
     const confirmDelete = (shopId : number) => {
-        console.log(shopId);
+        window.electron.ipcRenderer.once('delete-shop', (deleted) => {
+            if (deleted) {
+                setShops(shops.filter((shop) => shop.shop_id !== shopId));
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('delete-shop', [shopId]);
+        setShowDeleteModal(false);
     }
 
     return (

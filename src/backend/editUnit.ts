@@ -1,11 +1,10 @@
+import sqlite3 from 'sqlite3';
+
 import Unit from '../types/Unit';
 
 import { dbPath } from './params';
 
-export default async function fetchUnits() {
-    const sqlite3 = require("sqlite3").verbose();
-
-    let result : Unit[] = [];
+export default async function editUnit(editedUnit : Unit) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -13,13 +12,16 @@ export default async function fetchUnits() {
         }
     });
 
+    let edited = false;
+
     try {
-        result = await new Promise((resolve, reject) => {
-            db.all("SELECT * FROM Units", (err : any, rows : Unit[]) => {
+        edited = await new Promise((resolve, reject) => {
+            db.run("UPDATE Units SET unit_display_name = ?, unit_name = ?, unit_num = ? WHERE unit_id = ?",
+            [editedUnit.unit_display_name, editedUnit.unit_name, editedUnit.unit_num, editedUnit.unit_id], function(err : any) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(true);
                 }
             });
         });
@@ -31,5 +33,5 @@ export default async function fetchUnits() {
         })
     }
 
-    return result;
+    return edited;
 }

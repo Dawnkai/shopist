@@ -1,11 +1,10 @@
+import sqlite3 from 'sqlite3';
+
 import Product from '../types/Product';
 
 import { dbPath } from './params';
 
-export default async function fetchProducts() {
-    const sqlite3 = require("sqlite3").verbose();
-
-    let result : Product[] = [];
+export default async function editProduct(editedProduct : Product) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -13,13 +12,16 @@ export default async function fetchProducts() {
         }
     });
 
+    let edited = false;
+
     try {
-        result = await new Promise((resolve, reject) => {
-            db.all("SELECT * FROM Products", (err : any, rows : Product[]) => {
+        edited = await new Promise((resolve, reject) => {
+            db.run("UPDATE Products SET product_name = ?, product_description = ? WHERE product_id = ?",
+            [editedProduct.product_name, editedProduct.product_description, editedProduct.product_id], function(err : any) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(true);
                 }
             });
         });
@@ -31,5 +33,5 @@ export default async function fetchProducts() {
         })
     }
 
-    return result;
+    return edited;
 }

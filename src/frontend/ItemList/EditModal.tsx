@@ -23,7 +23,8 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
         item_unit: -1,
         unit_display_name: "",
         item_shop: -1,
-        shop_display_name: ""
+        shop_display_name: "",
+        item_date: ""
     });
 
     useEffect(() => {

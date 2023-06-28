@@ -43,15 +43,40 @@ export default function ProductList() {
     }
 
     const confirmAdd = (newProduct : Product) => {
-        console.log(newProduct);
+        window.electron.ipcRenderer.once('add-product', (newId) => {
+            const id = newId as number;
+            if (id > -1) {
+                newProduct.product_id = id;
+                setProducts([...products, newProduct]);
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('add-product', [newProduct]);
+        setShowAddModal(false);
     }
 
     const confirmDelete = (productId : number) => {
-        console.log(productId);
+        window.electron.ipcRenderer.once('delete-product', (deleted) => {
+            if (deleted) {
+                setProducts(products.filter((product) => product.product_id !== productId));
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('delete-product', [productId]);
+        setShowDeleteModal(false);
     }
 
     const confirmEdit = (editedProduct : Product) => {
-        console.log(editedProduct);
+        window.electron.ipcRenderer.once('edit-product', (edited) => {
+            if (edited) {
+                const index = products.findIndex((product) => product.product_id === editedProduct.product_id);
+                if (index > -1) {
+                    const productsCopy = [...products];
+                    productsCopy[index] = editedProduct;
+                    setProducts(productsCopy);
+                }
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('edit-product', [editedProduct]);
+        setShowEditModal(false);
     }
 
     return (

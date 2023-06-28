@@ -1,6 +1,8 @@
 import Item from '../types/Item';
 
-export default async function fetchitems(dbPath : string) {
+import { dbPath } from './params';
+
+export default async function fetchitems() {
     const sqlite3 = require("sqlite3").verbose();
 
     let result : Item[] = [];
@@ -29,7 +31,6 @@ export default async function fetchitems(dbPath : string) {
                 }
             });
         });
-        return result;
     } catch (err) {
         console.error(err);
     } finally {

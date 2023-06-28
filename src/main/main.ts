@@ -16,10 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 import createDatabase from '../backend/createDatabase';
-import fetchItems from '../backend/fetchItems';
-import fetchProducts from '../backend/fetchProducts';
-import fetchShops from '../backend/fetchShops';
-import fetchUnits from '../backend/fetchUnits';
+import setupIpcSubscriptions from '../backend/setupIpcSubscriptions';
 
 class AppUpdater {
   constructor() {
@@ -31,21 +28,7 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('fetch-items', async (event, arg) => {
-  event.reply('fetch-items', await fetchItems("database.db"));
-})
-
-ipcMain.on('fetch-units', async (event, arg) => {
-  event.reply('fetch-units', await fetchUnits("database.db"));
-});
-
-ipcMain.on('fetch-products', async (event, arg) => {
-  event.reply('fetch-products', await fetchProducts("database.db"));
-});
-
-ipcMain.on('fetch-shops', async (event, arg) => {
-  event.reply('fetch-shops', await fetchShops("database.db"));
-});
+setupIpcSubscriptions(ipcMain);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -144,7 +127,7 @@ app
   .whenReady()
   .then(() => {
     createWindow();
-    createDatabase("database.db");
+    createDatabase();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.

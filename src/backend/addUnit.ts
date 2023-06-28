@@ -1,11 +1,10 @@
+import sqlite3 from 'sqlite3';
+
 import Unit from '../types/Unit';
 
 import { dbPath } from './params';
 
-export default async function fetchUnits() {
-    const sqlite3 = require("sqlite3").verbose();
-
-    let result : Unit[] = [];
+export default async function addUnit(newUnit : Unit) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -13,13 +12,15 @@ export default async function fetchUnits() {
         }
     });
 
+    let newId = -1;
+
     try {
-        result = await new Promise((resolve, reject) => {
-            db.all("SELECT * FROM Units", (err : any, rows : Unit[]) => {
+        newId = await new Promise((resolve, reject) => {
+            db.run("INSERT INTO Units(unit_display_name, unit_name, unit_num) VALUES(?,?,?)", Object.values(newUnit), function(this: sqlite3.RunResult, err : any) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(this.lastID);
                 }
             });
         });
@@ -31,5 +32,5 @@ export default async function fetchUnits() {
         })
     }
 
-    return result;
+    return newId;
 }

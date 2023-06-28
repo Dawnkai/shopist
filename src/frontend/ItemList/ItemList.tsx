@@ -31,7 +31,8 @@ export default function ItemList() {
         item_unit: -1,
         unit_display_name: "",
         item_shop: -1,
-        shop_display_name: ""
+        shop_display_name: "",
+        item_date: ""
     });
 
     useEffect(() => {
@@ -73,15 +74,40 @@ export default function ItemList() {
     }
 
     const confirmAdd = (newItem : Item) => {
-        console.log(newItem);
+        window.electron.ipcRenderer.once('add-item', (newId) => {
+            const id = newId as number;
+            if (id > -1) {
+                newItem.item_id = id;
+                setItems([...items, newItem]);
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('add-item', [newItem]);
+        setShowAddModal(false);
     }
 
     const confirmEdit = (editedItem : Item) => {
-        console.log(editedItem);
+        window.electron.ipcRenderer.once('edit-item', (edited) => {
+            if (edited) {
+                const index = items.findIndex((item) => item.item_id === editedItem.item_id);
+                if (index > -1) {
+                    const itemsCopy = [...items];
+                    itemsCopy[index] = editedItem;
+                    setItems(itemsCopy);
+                }
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('edit-item', [editedItem]);
+        setShowEditModal(false);
     }
 
     const confirmDelete = (itemId : number) => {
-        console.log(itemId);
+        window.electron.ipcRenderer.once('delete-item', (deleted) => {
+            if (deleted) {
+                setItems(items.filter((item) => item.item_id !== itemId));
+            }
+        });
+        window.electron.ipcRenderer.sendMessage('delete-item', [itemId]);
+        setShowDeleteModal(false);
     }
 
     return (
