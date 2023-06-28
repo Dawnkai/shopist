@@ -1,22 +1,22 @@
-import addItem from "./addItem";
-import addProduct from "./addProduct";
-import addShop from "./addShop";
-import addUnit from "./addUnit";
+import addItem from "./Items/addItem";
+import addProduct from "./Products/addProduct";
+import addShop from "./Shops/addShop";
+import addUnit from "./Units/addUnit";
 
-import deleteItem from "./deleteItem";
-import deleteProduct from "./deleteProduct";
-import deleteShop from "./deleteShop";
-import deleteUnit from "./deleteUnit";
+import deleteItem from "./Items/deleteItem";
+import deleteProduct from "./Products/deleteProduct";
+import deleteShop from "./Shops/deleteShop";
+import deleteUnit from "./Units/deleteUnit";
 
-import editItem from "./editItem";
-import editProduct from "./editProduct";
-import editShop from "./editShop";
-import editUnit from "./editUnit";
+import editItem from "./Items/editItem";
+import editProduct from "./Products/editProduct";
+import editShop from "./Shops/editShop";
+import editUnit from "./Units/editUnit";
 
-import fetchItems from "./fetchItems";
-import fetchProducts from "./fetchProducts";
-import fetchShops from "./fetchShops";
-import fetchUnits from "./fetchUnits";
+import fetchItems from "./Items/fetchItems";
+import fetchProducts from "./Products/fetchProducts";
+import fetchShops from "./Shops/fetchShops";
+import fetchUnits from "./Units/fetchUnits";
 
 import Item from "../types/Item";
 import Product from "../types/Product";

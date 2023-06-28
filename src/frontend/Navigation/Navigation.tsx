@@ -23,7 +23,7 @@ export default function Navigation() {
         <Nav variant="tabs" defaultActiveKey="/">
         <Nav.Item>
             <LinkWithRouter
-                href="/items"
+                href="/"
                 title="Items"
             />
         </Nav.Item>
