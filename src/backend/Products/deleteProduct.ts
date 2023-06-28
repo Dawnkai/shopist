@@ -1,8 +1,8 @@
 import sqlite3 from 'sqlite3';
 
-import { dbPath } from './params';
+import { dbPath } from '../params';
 
-export default async function deleteShop(shopId : number) {
+export default async function deleteProduct(productId : number) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -14,7 +14,7 @@ export default async function deleteShop(shopId : number) {
 
     try {
         deleted = await new Promise((resolve, reject) => {
-            db.run("DELETE FROM Shops WHERE shop_id = ?", [shopId], function(err : any) {
+            db.run("DELETE FROM Products WHERE product_id = ?", [productId], function(err : any) {
                 if (err) {
                     reject(err);
                 } else {

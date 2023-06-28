@@ -1,8 +1,10 @@
 import sqlite3 from 'sqlite3';
 
-import { dbPath } from './params';
+import Product from '../../types/Product';
 
-export default async function deleteUnit(unitId : number) {
+import { dbPath } from '../params';
+
+export default async function addProduct(newProduct : Product) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -10,15 +12,16 @@ export default async function deleteUnit(unitId : number) {
         }
     });
 
-    let deleted = false;
+    let newId = -1;
 
     try {
-        deleted = await new Promise((resolve, reject) => {
-            db.run("DELETE FROM Units WHERE unit_id = ?", [unitId], function(err : any) {
+        newId = await new Promise((resolve, reject) => {
+            db.run("INSERT INTO Products(product_name, product_description) VALUES(?,?)",
+            Object.values(newProduct), function(this: sqlite3.RunResult, err : any) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(true);
+                    resolve(this.lastID);
                 }
             });
         });
@@ -30,5 +33,5 @@ export default async function deleteUnit(unitId : number) {
         })
     }
 
-    return deleted;
+    return newId;
 }

@@ -12,7 +12,8 @@ import { AddItemModalProps } from '../../types/AddModalProps';
 import Item from '../../types/Item';
 import FormControlElement from '../../types/FormControlElement';
 
-export default function AddModal({visible, setVisible, shops, units, products, handleSubmit}:AddItemModalProps) {
+export default function AddModal({visible, setVisible, shops,
+                                  units, products, handleSubmit}:AddItemModalProps) {
 
     const [newItem, setNewItem] = useState<Item>({
         item_quantity: 0,
@@ -66,7 +67,8 @@ export default function AddModal({visible, setVisible, shops, units, products, h
     display_field_name : string,
     source_name : string) => {
         const id_value = mapValueToId(source_name, e.target.value);
-        setNewItem(prev => ({...prev, [id_field_name]: id_value, [display_field_name]: e.target.value}));
+        setNewItem(prev => ({...prev, [id_field_name]: id_value,
+                            [display_field_name]: e.target.value}));
     }
 
     const handleChangeDropdown = (
@@ -76,7 +78,8 @@ export default function AddModal({visible, setVisible, shops, units, products, h
     source_name : string) => {
         const display_value = (e.target as HTMLElement).textContent
         const id_value = mapValueToId(source_name, display_value);
-        setNewItem(prev => ({...prev, [id_field_name]: id_value, [display_field_name]: display_value}));
+        setNewItem(prev => ({...prev, [id_field_name]: id_value,
+                            [display_field_name]: display_value}));
     }
 
     const formValid = () => {

@@ -7,7 +7,8 @@ import { EditShopModalProps } from '../../types/EditModalProps';
 import FormControlElement from '../../types/FormControlElement';
 import Shop from '../../types/Shop';
 
-export default function EditModal({visible, setVisible, selectedShop, handleSubmit}:EditShopModalProps) {
+export default function EditModal({visible, setVisible, selectedShop,
+                                   handleSubmit}:EditShopModalProps) {
 
     const [shop, setShop] = useState<Shop>({
         shop_id: -1,

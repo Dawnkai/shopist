@@ -1,10 +1,10 @@
 import sqlite3 from 'sqlite3';
 
-import Unit from '../types/Unit';
+import Product from '../../types/Product';
 
-import { dbPath } from './params';
+import { dbPath } from '../params';
 
-export default async function editUnit(editedUnit : Unit) {
+export default async function editProduct(editedProduct : Product) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -16,8 +16,10 @@ export default async function editUnit(editedUnit : Unit) {
 
     try {
         edited = await new Promise((resolve, reject) => {
-            db.run("UPDATE Units SET unit_display_name = ?, unit_name = ?, unit_num = ? WHERE unit_id = ?",
-            [editedUnit.unit_display_name, editedUnit.unit_name, editedUnit.unit_num, editedUnit.unit_id], function(err : any) {
+            db.run(`UPDATE Products SET product_name = ?, product_description = ? 
+                    WHERE product_id = ?`,
+            [editedProduct.product_name, editedProduct.product_description,
+            editedProduct.product_id], function(err : any) {
                 if (err) {
                     reject(err);
                 } else {

@@ -66,7 +66,9 @@ export default function AddModal({visible, setVisible, handleSubmit}:AddProductM
                 <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button variant="success" onClick={() => {if (formValid()) handleSubmit(newProduct)}}>
+                <Button variant="success" onClick={() => {
+                    if (formValid()) handleSubmit(newProduct)
+                }}>
                     Add
                 </Button>
             </Modal.Footer>

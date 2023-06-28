@@ -1,6 +1,6 @@
-import Shop from '../types/Shop';
+import Shop from '../../types/Shop';
 
-import { dbPath } from './params';
+import { dbPath } from '../params';
 
 export default async function fetchShops() {
     const sqlite3 = require("sqlite3").verbose();

@@ -7,7 +7,8 @@ import { EditUnitModalProps} from '../../types/EditModalProps';
 import FormControlElement from '../../types/FormControlElement';
 import Unit from '../../types/Unit';
 
-export default function EditModal({visible, setVisible, selectedUnit, handleSubmit}:EditUnitModalProps) {
+export default function EditModal({visible, setVisible, selectedUnit,
+                                   handleSubmit}:EditUnitModalProps) {
 
     const [unit, setUnit] = useState<Unit>({
         unit_id: -1,

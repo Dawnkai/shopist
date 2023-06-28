@@ -141,8 +141,12 @@ export default function ItemList() {
                                     <td>{item?.item_price} zł</td>
                                     <td>{item?.shop_display_name}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editItem(item)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteItem(item)}>Remove</Button>
+                                        <Button variant="secondary" onClick={() => editItem(item)}>
+                                            Edit
+                                        </Button>
+                                        <Button variant="danger" onClick={() => deleteItem(item)}>
+                                            Remove
+                                        </Button>
                                     </td>
                                 </tr>
                             ))

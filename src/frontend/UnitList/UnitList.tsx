@@ -110,8 +110,18 @@ export default function UnitList() {
                                     <td>{unit?.unit_name}</td>
                                     <td>{unit?.unit_num}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editUnit(unit)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteUnit(unit)}>Delete</Button>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => editUnit(unit)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => deleteUnit(unit)}
+                                        >
+                                            Delete
+                                        </Button>
                                     </td>
                                 </tr>
                             ))

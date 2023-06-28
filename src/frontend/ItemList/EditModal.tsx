@@ -12,7 +12,8 @@ import { EditItemModalProps } from '../../types/EditModalProps';
 import Item from '../../types/Item';
 import FormControlElement from '../../types/FormControlElement';
 
-export default function EditModal({visible, setVisible, selectedItem, shops, units, products, handleSubmit}:EditItemModalProps) {
+export default function EditModal({visible, setVisible, selectedItem, shops,
+                                   units, products, handleSubmit}:EditItemModalProps) {
 
     const [item, setItem] = useState<Item>({
         item_id: -1,
@@ -57,7 +58,8 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
     display_field_name : string,
     source_name : string) => {
         const id_value = mapValueToId(source_name, e.target.value);
-        setItem(prev => ({...prev, [id_field_name]: id_value, [display_field_name]: e.target.value}));
+        setItem(prev => ({...prev, [id_field_name]: id_value,
+                         [display_field_name]: e.target.value}));
     }
 
     const handleChangeDropdown = (
@@ -67,7 +69,8 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
     source_name : string) => {
         const display_value = (e.target as HTMLElement).textContent
         const id_value = mapValueToId(source_name, display_value);
-        setItem(prev => ({...prev, [id_field_name]: id_value, [display_field_name]: display_value}));
+        setItem(prev => ({...prev, [id_field_name]: id_value,
+                         [display_field_name]: display_value}));
     }
 
     return (
@@ -83,16 +86,22 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
                             aria-label="product-select"
                             value={item?.product_name}
                             name="product_name"
-                            onChange={(e) => handleChangeSelect(e, "item_product", "product_name", "products")}
+                            onChange={(e) => handleChangeSelect(e, "item_product",
+                                                                "product_name", "products")}
                         >
-                            {products.map((product) => <option key={product?.product_id}>{product?.product_name}</option>)}
+                            {products.map((product) => <option key={product?.product_id}>
+                                {product?.product_name}</option>)}
                         </Form.Select>
                     </Form.Group>
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="itemForm.QuantityInput">
                             <Form.Label>Quantity</Form.Label>
                             <InputGroup>
-                                <Form.Control type="number" name="item_quantity" value={item?.item_quantity} onChange={(e) => handleChange(e)}/>
+                                <Form.Control
+                                    type="number"
+                                    name="item_quantity"
+                                    value={item?.item_quantity} onChange={(e) => handleChange(e)}
+                                />
                                 <DropdownButton
                                     variant="outline-secondary"
                                     title={item?.unit_display_name}
@@ -101,7 +110,10 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
                                     <Dropdown.Item
                                         key={unit?.unit_id}
                                         name="unit_name"
-                                        onClick={(e) => handleChangeDropdown(e, "item_unit", "unit_name", "units")}
+                                        onClick={
+                                            (e) => handleChangeDropdown(e, "item_unit",
+                                                                        "unit_name", "units")
+                                        }
                                     >{unit?.unit_display_name}</Dropdown.Item>)}
                                 </DropdownButton>
                             </InputGroup>
@@ -129,7 +141,8 @@ export default function EditModal({visible, setVisible, selectedItem, shops, uni
                             name="shop_name"
                             onChange={(e) => handleChangeSelect(e, "item_shop", "shop_name", "shops")}
                         >
-                            {shops.map((shop) => <option key={shop?.shop_id}>{shop?.shop_display_name}</option>)}
+                            {shops.map((shop) => <option key={shop?.shop_id}>
+                                {shop?.shop_display_name}</option>)}
                         </Form.Select>
                     </Form.Group>
                 </Form>

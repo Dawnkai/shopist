@@ -5,7 +5,8 @@ import Table from 'react-bootstrap/Table';
 
 import { DeleteItemModalProps } from '../../types/DeleteModalProps';
 
-export default function DeleteModal({visible, setVisible, selectedItem, handleSubmit}:DeleteItemModalProps) {
+export default function DeleteModal({visible, setVisible,
+                                     selectedItem, handleSubmit}:DeleteItemModalProps) {
     const handleClose = () => setVisible(false);
 
     return (

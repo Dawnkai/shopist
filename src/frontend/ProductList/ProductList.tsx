@@ -67,7 +67,9 @@ export default function ProductList() {
     const confirmEdit = (editedProduct : Product) => {
         window.electron.ipcRenderer.once('edit-product', (edited) => {
             if (edited) {
-                const index = products.findIndex((product) => product.product_id === editedProduct.product_id);
+                const index = products.findIndex(
+                    (product) => product.product_id === editedProduct.product_id
+                );
                 if (index > -1) {
                     const productsCopy = [...products];
                     productsCopy[index] = editedProduct;
@@ -106,8 +108,18 @@ export default function ProductList() {
                                     <td>{product?.product_name}</td>
                                     <td>{product?.product_description}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editProduct(product)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteProduct(product)}>Remove</Button>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => editProduct(product)}
+                                        >
+                                                Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => deleteProduct(product)}
+                                        >
+                                            Remove
+                                        </Button>
                                     </td>
                                 </tr>
                             ))

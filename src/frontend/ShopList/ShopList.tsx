@@ -112,8 +112,18 @@ export default function ShopList() {
                                     <td>{shop?.shop_description}</td>
                                     <td>{shop?.shop_address}</td>
                                     <td>
-                                        <Button variant="secondary" onClick={() => editShop(shop)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteShop(shop)}>Remove</Button>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => editShop(shop)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => deleteShop(shop)}
+                                        >
+                                            Remove
+                                        </Button>
                                     </td>
                                 </tr>
                             ))

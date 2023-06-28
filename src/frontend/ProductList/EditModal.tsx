@@ -7,7 +7,8 @@ import { EditProductModalProps } from '../../types/EditModalProps';
 import FormControlElement from '../../types/FormControlElement';
 import Product from '../../types/Product';
 
-export default function EditModal({visible, setVisible, selectedProduct, handleSubmit}:EditProductModalProps) {
+export default function EditModal({visible, setVisible, selectedProduct,
+                                   handleSubmit}:EditProductModalProps) {
 
     const [product, setProduct] = useState<Product>({
         product_id: -1,

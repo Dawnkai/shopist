@@ -1,10 +1,10 @@
 import sqlite3 from 'sqlite3';
 
-import Item from '../types/Item';
+import Unit from '../../types/Unit';
 
-import { dbPath } from './params';
+import { dbPath } from '../params';
 
-export default async function addItem(newItem : Item) {
+export default async function addUnit(newUnit : Unit) {
 
     const db = new sqlite3.Database(dbPath, (err : any) => {
         if (err) {
@@ -16,9 +16,8 @@ export default async function addItem(newItem : Item) {
 
     try {
         newId = await new Promise((resolve, reject) => {
-            db.run("INSERT INTO Items(item_unit, item_shop, item_product, item_quantity, item_price, item_date) VALUES(?,?,?,?,?,?)",
-            [newItem.item_unit, newItem.item_shop, newItem.item_product, newItem.item_quantity, newItem.item_price, newItem.item_date],
-            function(this: sqlite3.RunResult, err : any) {
+            db.run("INSERT INTO Units(unit_display_name, unit_name, unit_num) VALUES(?,?,?)",
+                Object.values(newUnit), function(this: sqlite3.RunResult, err : any) {
                 if (err) {
                     reject(err);
                 } else {
