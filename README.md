@@ -9,17 +9,9 @@ Project still in progress.
 ```bash
 $ npm install
 ```
-2. Install `flask` using `pip`:
+2. Run the app in development mode using:
 ```bash
-$ pip install Flask
-```
-3. Run the backend using the following command:
-```bash
-$ npm run flask
-```
-4. Run the frontend using the following command:
-```bash
-$ npm run parcel
+$ npm start
 ```
 
 ### Generating mock data
@@ -34,3 +26,5 @@ $ python script.py
 * Statistics and plots
 
 Other, non-essential bugs and enchancements are listed in the issues, [here](https://github.com/Dawnkai/shopist/issues).
+
+Built with MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate).
