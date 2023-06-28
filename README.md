@@ -1,6 +1,6 @@
 # shopist
 Simple shopping list for managing the items you bought.
-Built for myself as a learning project (react, flask, data warehouses, generating excel documents) and as entry in job resume.
+Built for myself as a learning project (electron, data warehouses, typescript, generating excel documents) and as entry in job resume.
 Project still in progress.
 
 ## How to start
