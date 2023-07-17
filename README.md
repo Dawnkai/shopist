@@ -20,10 +20,10 @@ The [mock data folder](https://github.com/Dawnkai/shopist/tree/main/mock_data) c
 $ python script.py
 ```
 
-### TODO:
+### Future improvements:
 * Testing
 * Statistics and plots
 
-Other, non-essential bugs and enchancements are listed in the issues, [here](https://github.com/Dawnkai/shopist/issues).
+Bugs and enchancements are listed in the issues, [here](https://github.com/Dawnkai/shopist/issues). The ones marked with `important` label are prioritized over others.
 
 Built with MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate).
