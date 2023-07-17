@@ -25,7 +25,7 @@ export default function EditModal({visible, setVisible, selectedItem, shops,
         unit_display_name: "",
         item_shop: -1,
         shop_display_name: "",
-        item_date: ""
+        item_date: new Date().toJSON().slice(0, 10).toString()
     });
 
     useEffect(() => {
@@ -71,6 +71,16 @@ export default function EditModal({visible, setVisible, selectedItem, shops,
         const id_value = mapValueToId(source_name, display_value);
         setItem(prev => ({...prev, [id_field_name]: id_value,
                          [display_field_name]: display_value}));
+    }
+
+    const convertDate = (date : any) => {
+        if (date instanceof Date) {
+            return date.toJSON().slice(0, 10).toString();
+        }
+        if (date === "" || date === undefined) {
+            return new Date().toJSON().slice(0, 10).toString();
+        }
+        return date;
     }
 
     return (
@@ -144,6 +154,15 @@ export default function EditModal({visible, setVisible, selectedItem, shops,
                             {shops.map((shop) => <option key={shop?.shop_id}>
                                 {shop?.shop_display_name}</option>)}
                         </Form.Select>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="itemForm.DateInput">
+                        <Form.Label>Date</Form.Label>
+                        <Form.Control
+                            type="date"
+                            name="item_date"
+                            value={convertDate(item?.item_date)}
+                            onChange={(e) => handleChange(e)}
+                        />
                     </Form.Group>
                 </Form>
             </Modal.Body>

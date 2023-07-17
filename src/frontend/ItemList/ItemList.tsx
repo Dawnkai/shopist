@@ -37,6 +37,7 @@ export default function ItemList() {
 
     useEffect(() => {
         window.electron.ipcRenderer.once('fetch-items', (items) => {
+            console.log(items);
             setItems(items as Item[]);
         });
         window.electron.ipcRenderer.sendMessage('fetch-items', []);
@@ -74,6 +75,7 @@ export default function ItemList() {
     }
 
     const confirmAdd = (newItem : Item) => {
+        console.log(newItem);
         window.electron.ipcRenderer.once('add-item', (newId) => {
             const id = newId as number;
             if (id > -1) {
@@ -86,6 +88,7 @@ export default function ItemList() {
     }
 
     const confirmEdit = (editedItem : Item) => {
+        console.log(editedItem);
         window.electron.ipcRenderer.once('edit-item', (edited) => {
             if (edited) {
                 const index = items.findIndex((item) => item.item_id === editedItem.item_id);
@@ -129,6 +132,7 @@ export default function ItemList() {
                             <td>Quantity</td>
                             <td>Price</td>
                             <td>Shop</td>
+                            <td>Date</td>
                             <td></td>
                         </tr>
                     </thead>
@@ -140,6 +144,7 @@ export default function ItemList() {
                                     <td>{item?.item_quantity} {item?.unit_display_name}</td>
                                     <td>{item?.item_price} zł</td>
                                     <td>{item?.shop_display_name}</td>
+                                    <td>{item?.item_date}</td>
                                     <td>
                                         <Button variant="secondary" onClick={() => editItem(item)}>
                                             Edit
