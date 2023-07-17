@@ -24,6 +24,9 @@ import Shop from "../types/Shop";
 import Unit from "../types/Unit";
 
 import exportProducts from './Export/exportProducts';
+import exportItems from "./Export/exportItems";
+import exportShops from "./Export/exportShops";
+import exportUnits from "./Export/exportUnits";
 
 export default function setupIpcSubscriptions(ipc : Electron.IpcMain) {
     ipc.on('add-item', async (event, arg) => {
@@ -82,7 +85,16 @@ export default function setupIpcSubscriptions(ipc : Electron.IpcMain) {
     });
 
 
+    ipc.on('export-items', async (event, arg) => {
+        event.reply('export-items', await exportItems());
+    })
     ipc.on('export-products', async (event, arg) => {
         event.reply('export-products', await exportProducts());
-    })
+    });
+    ipc.on('export-shops', async (event, arg) => {
+        event.reply('export-products', await exportShops());
+    });
+    ipc.on('export-units', async (event, arg) => {
+        event.reply('export-products', await exportUnits());
+    });
 }

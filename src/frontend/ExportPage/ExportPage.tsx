@@ -4,9 +4,21 @@ import Card from 'react-bootstrap/Card';
 
 
 export default function ExportPage() {
+    
+    const exportItems = () => {
+        window.electron.ipcRenderer.sendMessage('export-items', []);
+    }
 
     const exportProducts = () => {
         window.electron.ipcRenderer.sendMessage('export-products', []);
+    }
+
+    const exportShops = () => {
+        window.electron.ipcRenderer.sendMessage('export-shops', []);
+    }
+
+    const exportUnits = () => {
+        window.electron.ipcRenderer.sendMessage('export-units', []);
     }
 
     return (
@@ -22,16 +34,16 @@ export default function ExportPage() {
                         <Card.Body className="text-center">
                             <Card.Text>Please pick desired export option.</Card.Text>
                             <ButtonGroup vertical>
-                                <Button variant="outline-success">
+                                <Button variant="outline-success" onClick={exportItems}>
                                     Export items
                                 </Button>
                                 <Button variant="outline-success" onClick={exportProducts}>
                                     Export products
                                 </Button>
-                                <Button variant="outline-success">
+                                <Button variant="outline-success" onClick={exportShops}>
                                     Export shops
                                 </Button>
-                                <Button variant="outline-success">
+                                <Button variant="outline-success" onClick={exportUnits}>
                                     Export units
                                 </Button>
                             </ButtonGroup>
