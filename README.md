@@ -21,7 +21,6 @@ $ python script.py
 ```
 
 ### TODO:
-* Generating template documents from data
 * Testing
 * Statistics and plots
 
