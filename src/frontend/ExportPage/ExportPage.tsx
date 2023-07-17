@@ -4,6 +4,11 @@ import Card from 'react-bootstrap/Card';
 
 
 export default function ExportPage() {
+
+    const exportProducts = () => {
+        window.electron.ipcRenderer.sendMessage('export-products', []);
+    }
+
     return (
         <>
             <Card>
@@ -20,7 +25,7 @@ export default function ExportPage() {
                                 <Button variant="outline-success">
                                     Export items
                                 </Button>
-                                <Button variant="outline-success">
+                                <Button variant="outline-success" onClick={exportProducts}>
                                     Export products
                                 </Button>
                                 <Button variant="outline-success">

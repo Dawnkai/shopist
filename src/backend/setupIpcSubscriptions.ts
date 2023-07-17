@@ -23,6 +23,8 @@ import Product from "../types/Product";
 import Shop from "../types/Shop";
 import Unit from "../types/Unit";
 
+import exportProducts from './Export/exportProducts';
+
 export default function setupIpcSubscriptions(ipc : Electron.IpcMain) {
     ipc.on('add-item', async (event, arg) => {
         event.reply('add-item', await addItem(arg[0] as Item));
@@ -78,4 +80,9 @@ export default function setupIpcSubscriptions(ipc : Electron.IpcMain) {
     ipc.on('fetch-units', async (event, arg) => {
         event.reply('fetch-units', await fetchUnits());
     });
+
+
+    ipc.on('export-products', async (event, arg) => {
+        event.reply('export-products', await exportProducts());
+    })
 }
