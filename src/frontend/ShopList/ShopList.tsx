@@ -6,9 +6,10 @@ import Table from 'react-bootstrap/Table';
 
 import Shop from '../../types/Shop';
 
-import AddModal from './AddModal';
 import DeleteModal from './DeleteModal';
-import EditModal from './EditModal';
+import { FormControl } from '../../types/ModalProps';
+import ModalForm from '../ModalForm';
+import getShopControls from '../ModalProps/getShopControls';
 
 export default function ShopList() {
   const [shops, setShops] = useState<Shop[]>([] as Shop[]);
@@ -30,6 +31,23 @@ export default function ShopList() {
     window.electron.ipcRenderer.sendMessage('fetch-shops', []);
   }, []);
 
+  const extractShop = (controls: FormControl[]) => {
+    const values = controls.reduce(
+      (acc: Shop, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      },
+      {
+        shop_id: 0,
+        shop_display_name: '',
+        shop_name: '',
+        shop_description: '',
+        shop_address: '',
+      }
+    );
+    return values;
+  };
+
   const addShop = () => {
     setShowAddModal(true);
   };
@@ -44,32 +62,35 @@ export default function ShopList() {
     setShowDeleteModal(true);
   };
 
-  const confirmAdd = (newShop: Shop) => {
+  const confirmAdd = (controls: FormControl[]) => {
+    const values = extractShop(controls);
     window.electron.ipcRenderer.once('add-shop', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        newShop.shop_id = id;
-        setShops([...shops, newShop]);
+        values.shop_id = id;
+        setShops([...shops, values as Shop]);
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-shop', [newShop]);
+    window.electron.ipcRenderer.sendMessage('add-shop', [values]);
     setShowAddModal(false);
   };
 
-  const confirmEdit = (editedShop: Shop) => {
+  const confirmEdit = (controls: FormControl[]) => {
+    const values = extractShop(controls);
+    values.shop_id = selectedShop.shop_id;
     window.electron.ipcRenderer.once('edit-shop', (edited) => {
       if (edited) {
         const index = shops.findIndex(
-          (shop) => shop.shop_id === editedShop.shop_id
+          (shop) => shop.shop_id === values.shop_id
         );
         if (index > -1) {
           const shopsCopy = [...shops];
-          shopsCopy[index] = editedShop;
+          shopsCopy[index] = values;
           setShops(shopsCopy);
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-shop', [editedShop]);
+    window.electron.ipcRenderer.sendMessage('edit-shop', [values]);
     setShowEditModal(false);
   };
 
@@ -130,10 +151,12 @@ export default function ShopList() {
           </Table>
         </Card.Body>
       </Card>
-      <AddModal
+      <ModalForm
         visible={showAddModal}
         setVisible={setShowAddModal}
         handleSubmit={confirmAdd}
+        controls={getShopControls(undefined)}
+        title="Add new shop"
       />
       <DeleteModal
         visible={showDeleteModal}
@@ -141,11 +164,12 @@ export default function ShopList() {
         selectedShop={selectedShop}
         handleSubmit={confirmDelete}
       />
-      <EditModal
+      <ModalForm
         visible={showEditModal}
         setVisible={setShowEditModal}
-        selectedShop={selectedShop}
         handleSubmit={confirmEdit}
+        controls={getShopControls(selectedShop)}
+        title="Edit shop"
       />
     </>
   );

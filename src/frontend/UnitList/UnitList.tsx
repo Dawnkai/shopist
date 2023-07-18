@@ -6,9 +6,10 @@ import Table from 'react-bootstrap/Table';
 
 import Unit from '../../types/Unit';
 
-import AddModal from './AddModal';
+import ModalForm from '../ModalForm';
 import DeleteModal from './DeleteModal';
-import EditModal from './EditModal';
+import getUnitControls from '../ModalProps/getUnitControls';
+import { FormControl } from '../../types/ModalProps';
 
 export default function UnitList() {
   const [units, setUnits] = useState<Unit[]>([] as Unit[]);
@@ -29,6 +30,22 @@ export default function UnitList() {
     window.electron.ipcRenderer.sendMessage('fetch-units', []);
   }, []);
 
+  const extractUnit = (controls: FormControl[]) => {
+    const values = controls.reduce(
+      (acc: Unit, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      },
+      {
+        unit_id: 0,
+        unit_display_name: '',
+        unit_name: '',
+        unit_num: 0,
+      }
+    );
+    return values;
+  };
+
   const addUnit = () => {
     setShowAddModal(true);
   };
@@ -43,15 +60,16 @@ export default function UnitList() {
     setShowEditModal(true);
   };
 
-  const confirmAdd = (newUnit: Unit) => {
+  const confirmAdd = (controls: FormControl[]) => {
+    const values = extractUnit(controls);
     window.electron.ipcRenderer.once('add-unit', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        newUnit.unit_id = id;
-        setUnits([...units, newUnit]);
+        values.unit_id = id;
+        setUnits([...units, values as Unit]);
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-unit', [newUnit]);
+    window.electron.ipcRenderer.sendMessage('add-unit', [values]);
     setShowAddModal(false);
   };
 
@@ -65,20 +83,22 @@ export default function UnitList() {
     setShowDeleteModal(false);
   };
 
-  const confirmEdit = (editedUnit: Unit) => {
+  const confirmEdit = (controls: FormControl[]) => {
+    const values = extractUnit(controls);
+    values.unit_id = selectedUnit.unit_id;
     window.electron.ipcRenderer.once('edit-unit', (edited) => {
       if (edited) {
         const index = units.findIndex(
-          (unit) => unit.unit_id === editedUnit.unit_id
+          (unit) => unit.unit_id === values.unit_id
         );
         if (index > -1) {
           const unitsCopy = [...units];
-          unitsCopy[index] = editedUnit;
+          unitsCopy[index] = values;
           setUnits(unitsCopy);
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-unit', [editedUnit]);
+    window.electron.ipcRenderer.sendMessage('edit-unit', [values]);
     setShowEditModal(false);
   };
 
@@ -127,10 +147,12 @@ export default function UnitList() {
           </Table>
         </Card.Body>
       </Card>
-      <AddModal
+      <ModalForm
         visible={showAddModal}
         setVisible={setShowAddModal}
         handleSubmit={confirmAdd}
+        controls={getUnitControls(undefined)}
+        title="Add new unit"
       />
       <DeleteModal
         visible={showDeleteModal}
@@ -138,11 +160,12 @@ export default function UnitList() {
         selectedUnit={selectedUnit}
         handleSubmit={confirmDelete}
       />
-      <EditModal
+      <ModalForm
         visible={showEditModal}
         setVisible={setShowEditModal}
-        selectedUnit={selectedUnit}
         handleSubmit={confirmEdit}
+        controls={getUnitControls(selectedUnit)}
+        title="Edit unit"
       />
     </>
   );

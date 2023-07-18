@@ -3,6 +3,7 @@ type Unit = {
   unit_display_name: string;
   unit_name: string;
   unit_num: number;
+  [key: string]: any;
 };
 
 export default Unit;

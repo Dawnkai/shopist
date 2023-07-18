@@ -6,9 +6,11 @@ import Table from 'react-bootstrap/Table';
 
 import Product from '../../types/Product';
 
-import AddModal from './AddModal';
 import DeleteModal from './DeleteModal';
-import EditModal from './EditModal';
+
+import { FormControl } from '../../types/ModalProps';
+import ModalForm from '../ModalForm';
+import getProductControls from '../ModalProps/getProductControls';
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([] as Product[]);
@@ -28,6 +30,21 @@ export default function ProductList() {
     window.electron.ipcRenderer.sendMessage('fetch-products', []);
   }, []);
 
+  const extractProduct = (controls: FormControl[]) => {
+    const values = controls.reduce(
+      (acc: Product, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      },
+      {
+        product_id: 0,
+        product_name: '',
+        product_description: '',
+      }
+    );
+    return values;
+  };
+
   const addProduct = () => {
     setShowAddModal(true);
   };
@@ -42,15 +59,16 @@ export default function ProductList() {
     setShowEditModal(true);
   };
 
-  const confirmAdd = (newProduct: Product) => {
+  const confirmAdd = (controls: FormControl[]) => {
+    const values = extractProduct(controls);
     window.electron.ipcRenderer.once('add-product', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        newProduct.product_id = id;
-        setProducts([...products, newProduct]);
+        values.product_id = id;
+        setProducts([...products, values as Product]);
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-product', [newProduct]);
+    window.electron.ipcRenderer.sendMessage('add-product', [values]);
     setShowAddModal(false);
   };
 
@@ -66,20 +84,22 @@ export default function ProductList() {
     setShowDeleteModal(false);
   };
 
-  const confirmEdit = (editedProduct: Product) => {
+  const confirmEdit = (controls: FormControl[]) => {
+    const values = extractProduct(controls);
+    values.product_id = selectedProduct.product_id;
     window.electron.ipcRenderer.once('edit-product', (edited) => {
       if (edited) {
         const index = products.findIndex(
-          (product) => product.product_id === editedProduct.product_id
+          (product) => product.product_id === values.product_id
         );
         if (index > -1) {
           const productsCopy = [...products];
-          productsCopy[index] = editedProduct;
+          productsCopy[index] = values;
           setProducts(productsCopy);
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-product', [editedProduct]);
+    window.electron.ipcRenderer.sendMessage('edit-product', [values]);
     setShowEditModal(false);
   };
 
@@ -132,10 +152,12 @@ export default function ProductList() {
           </Table>
         </Card.Body>
       </Card>
-      <AddModal
+      <ModalForm
         visible={showAddModal}
         setVisible={setShowAddModal}
         handleSubmit={confirmAdd}
+        controls={getProductControls(undefined)}
+        title="Add new product"
       />
       <DeleteModal
         visible={showDeleteModal}
@@ -143,11 +165,12 @@ export default function ProductList() {
         selectedProduct={selectedProduct}
         handleSubmit={confirmDelete}
       />
-      <EditModal
+      <ModalForm
         visible={showEditModal}
         setVisible={setShowEditModal}
-        selectedProduct={selectedProduct}
         handleSubmit={confirmEdit}
+        controls={getProductControls(selectedProduct)}
+        title="Edit product"
       />
     </>
   );
