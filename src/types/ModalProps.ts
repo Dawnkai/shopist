@@ -6,6 +6,7 @@ export type FormControl = {
   placeholder?: string;
   defaultValue?: any;
   value?: any;
+  valueRange?: any[];
   validation: (value: any) => boolean;
   [key: string]: any;
 };

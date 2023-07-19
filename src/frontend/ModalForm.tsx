@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import FormControlElement from 'types/FormControlElement';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import { FormControl, ModalProps } from '../types/ModalProps';
 
 export default function ModalForm({
@@ -21,12 +22,9 @@ export default function ModalForm({
 
   const handleClose = () => setVisible(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<FormControlElement>,
-    controlIdx: number
-  ) => {
+  const handleChange = (value: any, controlIdx: number) => {
     const prevControls = [...formControls];
-    prevControls[controlIdx].value = e.target.value;
+    prevControls[controlIdx].value = value;
     setFormControls(prevControls);
   };
 
@@ -37,6 +35,53 @@ export default function ModalForm({
       if (!control.validation(control.value)) valid = false;
     });
     return valid;
+  };
+
+  const getInputComponent = (control: FormControl, controlIdx: number) => {
+    if (control.inputType === 'input') {
+      return (
+        <Form.Control
+          type={control.valueType}
+          placeholder={control.placeholder}
+          name={control.name}
+          value={control.value}
+          onChange={(e) => handleChange(e.target.value, controlIdx)}
+        />
+      );
+    }
+    if (control.inputType === 'select' && control.valueRange !== null) {
+      return (
+        <Form.Select
+          aria-label={`${control.name}-select`}
+          value={control.value}
+          name={control.name}
+          onChange={(e) => handleChange(e.target.value, controlIdx)}
+        >
+          <option aria-label="none" />
+          {control.valueRange!.map((value) => (
+            <option key={`${value}`}>{value}</option>
+          ))}
+        </Form.Select>
+      );
+    }
+    if (control.inputType === 'dropdown' && control.valueRange !== null) {
+      return (
+        <DropdownButton variant="outline-secondary" title={control.value}>
+          {control.valueRange!.map((value) => (
+            <Dropdown.Item
+              key={value}
+              name={control.name}
+              onClick={(e) =>
+                handleChange((e.target as HTMLElement).textContent, controlIdx)
+              }
+            >
+              {value}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+      );
+    }
+    return null;
   };
 
   return (
@@ -53,14 +98,7 @@ export default function ModalForm({
                 controlId={`addForm.${control.name}Input`}
                 key={control.name}
               >
-                <Form.Label>{control.title}</Form.Label>
-                <Form.Control
-                  type={control.valueType}
-                  placeholder={control.placeholder}
-                  name={control.name}
-                  value={control.value}
-                  onChange={(e) => handleChange(e, controlIdx)}
-                />
+                {getInputComponent(control, controlIdx)}
               </Form.Group>
             );
           })}
