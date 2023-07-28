@@ -8,9 +8,9 @@ import Product from '../../types/Product';
 
 import DeleteModal from './DeleteModal';
 
-import { FormControl } from '../../types/ModalProps';
+import { BasicFormControl, FormControl } from '../../types/ModalProps';
 import ModalForm from '../ModalForm';
-import getProductControls from '../ModalProps/getProductControls';
+import getProductControls from '../ModalControls/getProductControls';
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([] as Product[]);
@@ -32,8 +32,10 @@ export default function ProductList() {
 
   const extractProduct = (controls: FormControl[]) => {
     const values = controls.reduce(
-      (acc: Product, { name, value }) => {
-        acc[name] = value;
+      (acc: Product, { control }) => {
+        acc[(control as BasicFormControl).name] = (
+          control as BasicFormControl
+        ).value;
         return acc;
       },
       {

@@ -7,9 +7,9 @@ import Table from 'react-bootstrap/Table';
 import Shop from '../../types/Shop';
 
 import DeleteModal from './DeleteModal';
-import { FormControl } from '../../types/ModalProps';
+import { BasicFormControl, FormControl } from '../../types/ModalProps';
 import ModalForm from '../ModalForm';
-import getShopControls from '../ModalProps/getShopControls';
+import getShopControls from '../ModalControls/getShopControls';
 
 export default function ShopList() {
   const [shops, setShops] = useState<Shop[]>([] as Shop[]);
@@ -33,8 +33,10 @@ export default function ShopList() {
 
   const extractShop = (controls: FormControl[]) => {
     const values = controls.reduce(
-      (acc: Shop, { name, value }) => {
-        acc[name] = value;
+      (acc: Shop, { control }) => {
+        acc[(control as BasicFormControl).name] = (
+          control as BasicFormControl
+        ).value;
         return acc;
       },
       {

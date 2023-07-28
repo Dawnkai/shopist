@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import { FormControl, ModalProps } from '../types/ModalProps';
+import { BasicFormControl, FormControl, ModalProps } from '../types/ModalProps';
 
 export default function ModalForm({
   visible,
@@ -24,7 +22,7 @@ export default function ModalForm({
 
   const handleChange = (value: any, controlIdx: number) => {
     const prevControls = [...formControls];
-    prevControls[controlIdx].value = value;
+    (prevControls[controlIdx].control as BasicFormControl).value = value;
     setFormControls(prevControls);
   };
 
@@ -32,53 +30,56 @@ export default function ModalForm({
     let valid: boolean = true;
     // eslint-disable-next-line consistent-return
     formControls.forEach((control) => {
-      if (!control.validation(control.value)) valid = false;
+      if (
+        control.type === 'basic' &&
+        !(control.control as BasicFormControl).validation(
+          (control.control as BasicFormControl).value
+        )
+      )
+        valid = false;
     });
     return valid;
   };
 
-  const getInputComponent = (control: FormControl, controlIdx: number) => {
+  const getInputComponent = (control: BasicFormControl, controlIdx: number) => {
     if (control.inputType === 'input') {
       return (
-        <Form.Control
-          type={control.valueType}
-          placeholder={control.placeholder}
-          name={control.name}
-          value={control.value}
-          onChange={(e) => handleChange(e.target.value, controlIdx)}
-        />
+        <Form.Group
+          className="mb-3"
+          controlId={`addForm.${control.name}Input`}
+          key={control.name}
+        >
+          <Form.Label>{control.title}</Form.Label>
+          <Form.Control
+            type={control.valueType}
+            placeholder={control.placeholder}
+            name={control.name}
+            value={control.value}
+            onChange={(e) => handleChange(e.target.value, controlIdx)}
+          />
+        </Form.Group>
       );
     }
     if (control.inputType === 'select' && control.valueRange !== null) {
       return (
-        <Form.Select
-          aria-label={`${control.name}-select`}
-          value={control.value}
-          name={control.name}
-          onChange={(e) => handleChange(e.target.value, controlIdx)}
+        <Form.Group
+          className="mb-3"
+          controlId={`addForm.${control.name}Input`}
+          key={control.name}
         >
-          <option aria-label="none" />
-          {control.valueRange!.map((value) => (
-            <option key={`${value}`}>{value}</option>
-          ))}
-        </Form.Select>
-      );
-    }
-    if (control.inputType === 'dropdown' && control.valueRange !== null) {
-      return (
-        <DropdownButton variant="outline-secondary" title={control.value}>
-          {control.valueRange!.map((value) => (
-            <Dropdown.Item
-              key={value}
-              name={control.name}
-              onClick={(e) =>
-                handleChange((e.target as HTMLElement).textContent, controlIdx)
-              }
-            >
-              {value}
-            </Dropdown.Item>
-          ))}
-        </DropdownButton>
+          <Form.Label>{control.title}</Form.Label>
+          <Form.Select
+            aria-label={`${control.name}-select`}
+            value={control.value}
+            name={control.name}
+            onChange={(e) => handleChange(e.target.value, controlIdx)}
+          >
+            <option aria-label="none" />
+            {control.valueRange!.map((value) => (
+              <option key={`${value}`}>{value}</option>
+            ))}
+          </Form.Select>
+        </Form.Group>
       );
     }
     return null;
@@ -91,17 +92,14 @@ export default function ModalForm({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          {formControls.map((control, controlIdx) => {
-            return (
-              <Form.Group
-                className="mb-3"
-                controlId={`addForm.${control.name}Input`}
-                key={control.name}
-              >
-                {getInputComponent(control, controlIdx)}
-              </Form.Group>
-            );
-          })}
+          {formControls.map((control, controlIdx) =>
+            control.type === 'basic'
+              ? getInputComponent(
+                  control.control as BasicFormControl,
+                  controlIdx
+                )
+              : (control.control as ReactElement<any, any>)
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer>

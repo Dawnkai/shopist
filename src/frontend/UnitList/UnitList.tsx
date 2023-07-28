@@ -8,8 +8,8 @@ import Unit from '../../types/Unit';
 
 import ModalForm from '../ModalForm';
 import DeleteModal from './DeleteModal';
-import getUnitControls from '../ModalProps/getUnitControls';
-import { FormControl } from '../../types/ModalProps';
+import getUnitControls from '../ModalControls/getUnitControls';
+import { BasicFormControl, FormControl } from '../../types/ModalProps';
 
 export default function UnitList() {
   const [units, setUnits] = useState<Unit[]>([] as Unit[]);
@@ -32,8 +32,10 @@ export default function UnitList() {
 
   const extractUnit = (controls: FormControl[]) => {
     const values = controls.reduce(
-      (acc: Unit, { name, value }) => {
-        acc[name] = value;
+      (acc: Unit, { control }) => {
+        acc[(control as BasicFormControl).name] = (
+          control as BasicFormControl
+        ).value;
         return acc;
       },
       {
