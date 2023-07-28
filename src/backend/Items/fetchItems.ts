@@ -16,11 +16,12 @@ export default async function fetchitems() {
         `
             SELECT 
                 i.item_id, i.item_quantity, i.item_price, i.item_product, p.product_name,
-                i.item_unit, u.unit_display_name, i.item_shop, s.shop_display_name 
+                i.item_unit, u.unit_display_name, i.item_shop, s.shop_display_name, i.item_date
             FROM Items i, Products p, Units u, Shops s 
             WHERE i.item_product = p.product_id 
-            AND i.item_unit = u.unit_id 
-            AND i.item_shop = s.shop_id`,
+            AND i.item_unit = u.unit_id
+            AND i.item_shop = s.shop_id
+            ORDER BY i.item_date NULLS LAST`,
         (err: any, rows: Item[]) => {
           if (err) {
             reject(err);

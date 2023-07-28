@@ -134,6 +134,7 @@ export default function ItemList() {
                 <td>Quantity</td>
                 <td>Price</td>
                 <td>Shop</td>
+                <td>Date</td>
                 <td />
               </tr>
             </thead>
@@ -146,6 +147,7 @@ export default function ItemList() {
                   </td>
                   <td>{item?.item_price} zł</td>
                   <td>{item?.shop_display_name}</td>
+                  <td>{item?.item_date}</td>
                   <td>
                     <Button variant="secondary" onClick={() => editItem(item)}>
                       Edit

@@ -29,7 +29,7 @@ export default function AddModal({
     unit_display_name: units[0] !== undefined ? units[0].unit_display_name : '',
     item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
     shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : '',
-    item_date: '',
+    item_date: new Date().toJSON().slice(0, 10).toString(),
   });
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function AddModal({
       item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
       shop_display_name:
         shops[0] !== undefined ? shops[0].shop_display_name : '',
-      item_date: '',
+      item_date: new Date().toJSON().slice(0, 10).toString(),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
@@ -130,7 +130,7 @@ export default function AddModal({
                 );
               }}
             >
-              <option aria-label="none" />
+              <option aria-label="empty-product" />
               {products.map((product) => (
                 <option key={product?.product_id}>
                   {product?.product_name}
@@ -198,11 +198,20 @@ export default function AddModal({
                 handleChangeSelect(e, 'item_shop', 'shop_name', 'shops')
               }
             >
-              <option aria-label="none" />
+              <option aria-label="empty-shop" />
               {shops.map((shop) => (
                 <option key={shop?.shop_id}>{shop?.shop_display_name}</option>
               ))}
             </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="itemForm.DateInput">
+            <Form.Label>Date</Form.Label>
+            <Form.Control
+              type="date"
+              name="item_date"
+              value={newItem?.item_date}
+              onChange={(e) => handleChange(e)}
+            />
           </Form.Group>
         </Form>
       </Modal.Body>
