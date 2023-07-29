@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Shop from '../../types/Shop';
+import Shop from '../../frontend/types/Shop';
 import { dbPath } from '../params';
 
 export default async function addShop(newShop: Shop) {

@@ -9,7 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 
 import { AddItemModalProps } from '../../types/AddModalProps';
-import Item from '../../types/Item';
+import { defaultItem, Item } from '../../types/Item';
 import FormControlElement from '../../types/FormControlElement';
 
 export default function AddModal({
@@ -20,34 +20,7 @@ export default function AddModal({
   products,
   handleSubmit,
 }: AddItemModalProps) {
-  const [newItem, setNewItem] = useState<Item>({
-    item_quantity: 0,
-    item_price: 0,
-    item_product: products[0] !== undefined ? products[0].product_id : -1,
-    product_name: products[0] !== undefined ? products[0].product_name : '',
-    item_unit: units[0] !== undefined ? units[0].unit_id : -1,
-    unit_display_name: units[0] !== undefined ? units[0].unit_display_name : '',
-    item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
-    shop_display_name: shops[0] !== undefined ? shops[0].shop_display_name : '',
-    item_date: new Date().toJSON().slice(0, 10).toString(),
-  });
-
-  useEffect(() => {
-    setNewItem({
-      item_quantity: 0,
-      item_price: 0,
-      item_product: products[0] !== undefined ? products[0].product_id : -1,
-      product_name: products[0] !== undefined ? products[0].product_name : '',
-      item_unit: units[0] !== undefined ? units[0].unit_id : -1,
-      unit_display_name:
-        units[0] !== undefined ? units[0].unit_display_name : '',
-      item_shop: shops[0] !== undefined ? shops[0].shop_id : -1,
-      shop_display_name:
-        shops[0] !== undefined ? shops[0].shop_display_name : '',
-      item_date: new Date().toJSON().slice(0, 10).toString(),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  const [newItem, setNewItem] = useState<Item>(defaultItem);
 
   const handleClose = () => setVisible(false);
 

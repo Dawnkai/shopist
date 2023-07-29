@@ -1,21 +1,8 @@
-import { FormControl } from 'types/ModalProps';
-import Unit from '../../types/Unit';
+import { FormControl } from '../../types/ModalProps';
+import { Unit } from '../../types/Unit';
 
 function getUnitControls(currentValues?: Unit) {
   const values: FormControl[] = [
-    {
-      type: 'basic',
-      control: {
-        name: 'unit_id',
-        title: 'Unit id',
-        inputType: 'input',
-        valueType: 'number',
-        placeholder: 'Unit id',
-        defaultValue: 0,
-        value: currentValues ? currentValues.unit_id : 0,
-        validation: (value: any): value is number => value > -1,
-      },
-    },
     {
       type: 'basic',
       control: {

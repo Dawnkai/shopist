@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Item from '../../types/Item';
+import Item from '../../frontend/types/Item';
 import { dbPath } from '../params';
 
 export default async function editItem(editedItem: Item) {

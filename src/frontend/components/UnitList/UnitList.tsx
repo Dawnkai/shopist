@@ -4,85 +4,89 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-import Unit from '../../types/Unit';
+import { useDispatch, useSelector } from 'react-redux';
+import { defaultUnit, Unit } from '../../types/Unit';
 
-import ModalForm from '../ModalForm';
+import ModalForm from '../../ModalForm';
 import DeleteModal from './DeleteModal';
 import getUnitControls from '../ModalControls/getUnitControls';
 import { BasicFormControl, FormControl } from '../../types/ModalProps';
 
+import { RootState } from '../../../main/store';
+
+import {
+  addUnit,
+  deleteUnit,
+  setUnits,
+  setSelectedUnit,
+} from '../../slices/unitSlice';
+
 export default function UnitList() {
-  const [units, setUnits] = useState<Unit[]>([] as Unit[]);
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [showEditModal, setShowEditModal] = useState<boolean>(false);
-  const [selectedUnit, setSelectedUnit] = useState<Unit>({
-    unit_id: -1,
-    unit_display_name: '',
-    unit_name: '',
-    unit_num: 0,
-  });
+  const units = useSelector((state: RootState) => state.unit.units);
+  const selectedUnit = useSelector(
+    (state: RootState) => state.unit.selectedUnit
+  );
+  const dispatch = useDispatch();
+
+  const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+  const [isShowEditModal, setIsShowEditModal] = useState<boolean>(false);
 
   useEffect(() => {
     window.electron.ipcRenderer.once('fetch-units', (unitsList) => {
-      setUnits(unitsList as Unit[]);
+      dispatch(setUnits(unitsList as Unit[]));
     });
     window.electron.ipcRenderer.sendMessage('fetch-units', []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const extractUnit = (controls: FormControl[]) => {
-    const values = controls.reduce(
-      (acc: Unit, { control }) => {
-        acc[(control as BasicFormControl).name] = (
-          control as BasicFormControl
-        ).value;
-        return acc;
-      },
-      {
-        unit_id: 0,
-        unit_display_name: '',
-        unit_name: '',
-        unit_num: 0,
-      }
-    );
+    const values = controls.reduce((acc: Unit, { control }) => {
+      acc[(control as BasicFormControl).name] = (
+        control as BasicFormControl
+      ).value;
+      return acc;
+    }, defaultUnit);
     return values;
   };
 
-  const addUnit = () => {
-    setShowAddModal(true);
+  const showAddModal = () => {
+    dispatch(setSelectedUnit(defaultUnit));
+    setIsShowAddModal(true);
   };
 
-  const deleteUnit = (unit: Unit) => {
-    setSelectedUnit(unit);
-    setShowDeleteModal(true);
+  const showDeleteModal = (unit: Unit) => {
+    dispatch(setSelectedUnit(unit));
+    setIsShowDeleteModal(true);
   };
 
-  const editUnit = (unit: Unit) => {
-    setSelectedUnit(unit);
-    setShowEditModal(true);
+  const showEditModal = (unit: Unit) => {
+    dispatch(setSelectedUnit(unit));
+    setIsShowEditModal(true);
   };
 
   const confirmAdd = (controls: FormControl[]) => {
     const values = extractUnit(controls);
+    delete values.unit_id;
     window.electron.ipcRenderer.once('add-unit', (newId) => {
       const id = newId as number;
       if (id > -1) {
         values.unit_id = id;
-        setUnits([...units, values as Unit]);
+        dispatch(addUnit(values));
       }
     });
     window.electron.ipcRenderer.sendMessage('add-unit', [values]);
-    setShowAddModal(false);
+    setIsShowAddModal(false);
   };
 
   const confirmDelete = (unitId: number) => {
     window.electron.ipcRenderer.once('delete-unit', (deleted) => {
       if (deleted) {
-        setUnits(units.filter((unit) => unit.unit_id !== unitId));
+        dispatch(deleteUnit(unitId));
       }
     });
     window.electron.ipcRenderer.sendMessage('delete-unit', [unitId]);
-    setShowDeleteModal(false);
+    setIsShowDeleteModal(false);
   };
 
   const confirmEdit = (controls: FormControl[]) => {
@@ -96,12 +100,12 @@ export default function UnitList() {
         if (index > -1) {
           const unitsCopy = [...units];
           unitsCopy[index] = values;
-          setUnits(unitsCopy);
+          dispatch(setUnits(unitsCopy));
         }
       }
     });
     window.electron.ipcRenderer.sendMessage('edit-unit', [values]);
-    setShowEditModal(false);
+    setIsShowEditModal(false);
   };
 
   return (
@@ -114,7 +118,7 @@ export default function UnitList() {
             </h3>
           </div>
           <div className="float-end">
-            <Button variant="success" onClick={addUnit}>
+            <Button variant="success" onClick={showAddModal}>
               Add New Unit
             </Button>
           </div>
@@ -136,10 +140,16 @@ export default function UnitList() {
                   <td>{unit?.unit_name}</td>
                   <td>{unit?.unit_num}</td>
                   <td>
-                    <Button variant="secondary" onClick={() => editUnit(unit)}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => showEditModal(unit)}
+                    >
                       Edit
                     </Button>
-                    <Button variant="danger" onClick={() => deleteUnit(unit)}>
+                    <Button
+                      variant="danger"
+                      onClick={() => showDeleteModal(unit)}
+                    >
                       Delete
                     </Button>
                   </td>
@@ -150,21 +160,21 @@ export default function UnitList() {
         </Card.Body>
       </Card>
       <ModalForm
-        visible={showAddModal}
-        setVisible={setShowAddModal}
+        visible={isShowAddModal}
+        setVisible={setIsShowAddModal}
         handleSubmit={confirmAdd}
         controls={getUnitControls(undefined)}
         title="Add new unit"
       />
       <DeleteModal
-        visible={showDeleteModal}
-        setVisible={setShowDeleteModal}
+        visible={isShowDeleteModal}
+        setVisible={setIsShowDeleteModal}
         selectedUnit={selectedUnit}
         handleSubmit={confirmDelete}
       />
       <ModalForm
-        visible={showEditModal}
-        setVisible={setShowEditModal}
+        visible={isShowEditModal}
+        setVisible={setIsShowEditModal}
         handleSubmit={confirmEdit}
         controls={getUnitControls(selectedUnit)}
         title="Edit unit"

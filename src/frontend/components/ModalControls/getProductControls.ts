@@ -1,21 +1,8 @@
-import { FormControl } from 'types/ModalProps';
-import Product from '../../types/Product';
+import { FormControl } from 'frontend/types/ModalProps';
+import { Product } from '../../types/Product';
 
 function getProductControls(currentValues?: Product) {
   const values: FormControl[] = [
-    {
-      type: 'basic',
-      control: {
-        name: 'product_id',
-        title: 'Product id',
-        inputType: 'input',
-        valueType: 'number',
-        placeholder: 'Product id',
-        defaultValue: 0,
-        value: currentValues ? currentValues.product_id : 0,
-        validation: (value: any): value is number => value > -1,
-      },
-    },
     {
       type: 'basic',
       control: {

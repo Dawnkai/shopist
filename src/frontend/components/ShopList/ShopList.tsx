@@ -4,77 +4,78 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-import Shop from '../../types/Shop';
+import { useDispatch, useSelector } from 'react-redux';
+import { Shop, defaultShop } from '../../types/Shop';
 
 import DeleteModal from './DeleteModal';
 import { BasicFormControl, FormControl } from '../../types/ModalProps';
-import ModalForm from '../ModalForm';
+import ModalForm from '../../ModalForm';
 import getShopControls from '../ModalControls/getShopControls';
+import { RootState } from '../../../main/store';
+
+import {
+  addShop,
+  deleteShop,
+  setShops,
+  setSelectedShop,
+} from '../../slices/shopSlice';
 
 export default function ShopList() {
-  const [shops, setShops] = useState<Shop[]>([] as Shop[]);
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [showEditModal, setShowEditModal] = useState<boolean>(false);
-  const [selectedShop, setSelectedShop] = useState<Shop>({
-    shop_id: -1,
-    shop_display_name: '',
-    shop_name: '',
-    shop_description: '',
-    shop_address: '',
-  });
+  const shops = useSelector((state: RootState) => state.shop.shops);
+  const selectedShop = useSelector(
+    (state: RootState) => state.shop.selectedShop
+  );
+  const dispatch = useDispatch();
+
+  const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+  const [isShowEditModal, setIsShowEditModal] = useState<boolean>(false);
 
   useEffect(() => {
     window.electron.ipcRenderer.once('fetch-shops', (shopsList) => {
-      setShops(shopsList as Shop[]);
+      dispatch(setShops(shopsList as Shop[]));
     });
     window.electron.ipcRenderer.sendMessage('fetch-shops', []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const extractShop = (controls: FormControl[]) => {
-    const values = controls.reduce(
-      (acc: Shop, { control }) => {
-        acc[(control as BasicFormControl).name] = (
-          control as BasicFormControl
-        ).value;
-        return acc;
-      },
-      {
-        shop_id: 0,
-        shop_display_name: '',
-        shop_name: '',
-        shop_description: '',
-        shop_address: '',
-      }
-    );
+    const values = controls.reduce((acc: Shop, { control }) => {
+      acc[(control as BasicFormControl).name] = (
+        control as BasicFormControl
+      ).value;
+      return acc;
+    }, defaultShop);
     return values;
   };
 
-  const addShop = () => {
-    setShowAddModal(true);
+  const showAddModal = () => {
+    dispatch(setSelectedShop(defaultShop));
+    setIsShowAddModal(true);
   };
 
-  const editShop = (shop: Shop) => {
-    setSelectedShop(shop);
-    setShowEditModal(true);
+  const showEditModal = (shop: Shop) => {
+    dispatch(setSelectedShop(shop));
+    setIsShowEditModal(true);
   };
 
-  const deleteShop = (shop: Shop) => {
-    setSelectedShop(shop);
-    setShowDeleteModal(true);
+  const showDeleteModal = (shop: Shop) => {
+    dispatch(setSelectedShop(shop));
+    setIsShowDeleteModal(true);
   };
 
   const confirmAdd = (controls: FormControl[]) => {
     const values = extractShop(controls);
+    delete values.shop_id;
     window.electron.ipcRenderer.once('add-shop', (newId) => {
       const id = newId as number;
       if (id > -1) {
         values.shop_id = id;
-        setShops([...shops, values as Shop]);
+        dispatch(addShop(values));
       }
     });
     window.electron.ipcRenderer.sendMessage('add-shop', [values]);
-    setShowAddModal(false);
+    setIsShowAddModal(false);
   };
 
   const confirmEdit = (controls: FormControl[]) => {
@@ -88,22 +89,22 @@ export default function ShopList() {
         if (index > -1) {
           const shopsCopy = [...shops];
           shopsCopy[index] = values;
-          setShops(shopsCopy);
+          dispatch(setShops(shopsCopy));
         }
       }
     });
     window.electron.ipcRenderer.sendMessage('edit-shop', [values]);
-    setShowEditModal(false);
+    setIsShowEditModal(false);
   };
 
   const confirmDelete = (shopId: number) => {
     window.electron.ipcRenderer.once('delete-shop', (deleted) => {
       if (deleted) {
-        setShops(shops.filter((shop) => shop.shop_id !== shopId));
+        dispatch(deleteShop(shopId));
       }
     });
     window.electron.ipcRenderer.sendMessage('delete-shop', [shopId]);
-    setShowDeleteModal(false);
+    setIsShowDeleteModal(false);
   };
 
   return (
@@ -116,7 +117,7 @@ export default function ShopList() {
             </h3>
           </div>
           <div className="float-end">
-            <Button variant="success" onClick={addShop}>
+            <Button variant="success" onClick={showAddModal}>
               Add New Shop
             </Button>
           </div>
@@ -140,10 +141,16 @@ export default function ShopList() {
                   <td>{shop?.shop_description}</td>
                   <td>{shop?.shop_address}</td>
                   <td>
-                    <Button variant="secondary" onClick={() => editShop(shop)}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => showEditModal(shop)}
+                    >
                       Edit
                     </Button>
-                    <Button variant="danger" onClick={() => deleteShop(shop)}>
+                    <Button
+                      variant="danger"
+                      onClick={() => showDeleteModal(shop)}
+                    >
                       Remove
                     </Button>
                   </td>
@@ -154,21 +161,21 @@ export default function ShopList() {
         </Card.Body>
       </Card>
       <ModalForm
-        visible={showAddModal}
-        setVisible={setShowAddModal}
+        visible={isShowAddModal}
+        setVisible={setIsShowAddModal}
         handleSubmit={confirmAdd}
         controls={getShopControls(undefined)}
         title="Add new shop"
       />
       <DeleteModal
-        visible={showDeleteModal}
-        setVisible={setShowDeleteModal}
+        visible={isShowDeleteModal}
+        setVisible={setIsShowDeleteModal}
         selectedShop={selectedShop}
         handleSubmit={confirmDelete}
       />
       <ModalForm
-        visible={showEditModal}
-        setVisible={setShowEditModal}
+        visible={isShowEditModal}
+        setVisible={setIsShowEditModal}
         handleSubmit={confirmEdit}
         controls={getShopControls(selectedShop)}
         title="Edit shop"

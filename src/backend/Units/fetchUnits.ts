@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Unit from '../../types/Unit';
+import Unit from '../../frontend/types/Unit';
 import { dbPath } from '../params';
 
 export default async function fetchUnits() {

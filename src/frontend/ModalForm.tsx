@@ -2,7 +2,7 @@ import React, { useState, useEffect, ReactElement } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { BasicFormControl, FormControl, ModalProps } from '../types/ModalProps';
+import { BasicFormControl, FormControl, ModalProps } from './types/ModalProps';
 
 export default function ModalForm({
   visible,
@@ -54,7 +54,7 @@ export default function ModalForm({
             type={control.valueType}
             placeholder={control.placeholder}
             name={control.name}
-            value={control.value}
+            value={control.value ? control.value : control.defaultValue}
             onChange={(e) => handleChange(e.target.value, controlIdx)}
           />
         </Form.Group>
@@ -70,7 +70,7 @@ export default function ModalForm({
           <Form.Label>{control.title}</Form.Label>
           <Form.Select
             aria-label={`${control.name}-select`}
-            value={control.value}
+            value={control.value ? control.value : control.defaultValue}
             name={control.name}
             onChange={(e) => handleChange(e.target.value, controlIdx)}
           >
