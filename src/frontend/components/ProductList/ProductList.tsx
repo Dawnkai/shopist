@@ -5,13 +5,12 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-import { Product, defaultProduct } from '../../types/Product';
+import { Product, defaultProduct } from '../../../types/Product';
 
-import DeleteModal from './DeleteModal';
+import AddProductModal from './AddProductModal';
+import DeleteProductModal from './DeleteProductModal';
+import EditProductModal from './EditProductModal';
 
-import { BasicFormControl, FormControl } from '../../types/ModalProps';
-import ModalForm from '../../ModalForm';
-import getProductControls from '../ModalControls/getProductControls';
 import { RootState } from '../../../main/store';
 
 import {
@@ -23,9 +22,6 @@ import {
 
 export default function ProductList() {
   const products = useSelector((state: RootState) => state.product.products);
-  const selectedProduct = useSelector(
-    (state: RootState) => state.product.selectedProduct
-  );
   const dispatch = useDispatch();
 
   const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
@@ -39,23 +35,6 @@ export default function ProductList() {
     window.electron.ipcRenderer.sendMessage('fetch-products', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const extractProduct = (controls: FormControl[]) => {
-    const values = controls.reduce(
-      (acc: Product, { control }) => {
-        acc[(control as BasicFormControl).name] = (
-          control as BasicFormControl
-        ).value;
-        return acc;
-      },
-      {
-        product_id: 0,
-        product_name: '',
-        product_description: '',
-      }
-    );
-    return values;
-  };
 
   const showAddModal = () => {
     dispatch(setSelectedProduct(defaultProduct));
@@ -72,46 +51,44 @@ export default function ProductList() {
     setIsShowEditModal(true);
   };
 
-  const confirmAdd = (controls: FormControl[]) => {
-    const values = extractProduct(controls);
-    delete values.product_id;
+  const confirmAdd = (newProduct: Product) => {
     window.electron.ipcRenderer.once('add-product', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        values.product_id = id;
-        dispatch(addProduct(values));
+        newProduct.productId = id;
+        dispatch(addProduct(newProduct));
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-product', [values]);
+    window.electron.ipcRenderer.sendMessage('add-product', [newProduct]);
     setIsShowAddModal(false);
   };
 
-  const confirmDelete = (productId: number) => {
+  const confirmDelete = (product: Product) => {
     window.electron.ipcRenderer.once('delete-product', (isDeleted) => {
-      if (isDeleted) {
-        dispatch(deleteProduct(productId));
+      if (isDeleted && product.productId) {
+        dispatch(deleteProduct(product.productId));
       }
     });
-    window.electron.ipcRenderer.sendMessage('delete-product', [productId]);
+    window.electron.ipcRenderer.sendMessage('delete-product', [
+      product.productId,
+    ]);
     setIsShowDeleteModal(false);
   };
 
-  const confirmEdit = (controls: FormControl[]) => {
-    const values = extractProduct(controls);
-    values.product_id = selectedProduct.product_id;
-    window.electron.ipcRenderer.once('edit-product', (editedProduct) => {
-      if (editedProduct) {
+  const confirmEdit = (editedProduct: Product) => {
+    window.electron.ipcRenderer.once('edit-product', (isEdited) => {
+      if (isEdited) {
         const index = products.findIndex(
-          (product) => product.product_id === values.product_id
+          (product) => product.productId === editedProduct.productId
         );
         if (index > -1) {
           const productsCopy = [...products];
-          productsCopy[index] = values;
+          productsCopy[index] = editedProduct;
           dispatch(setProducts(productsCopy));
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-product', [values]);
+    window.electron.ipcRenderer.sendMessage('edit-product', [editedProduct]);
     setIsShowEditModal(false);
   };
 
@@ -141,9 +118,9 @@ export default function ProductList() {
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product?.product_id}>
-                  <td>{product?.product_name}</td>
-                  <td>{product?.product_description}</td>
+                <tr key={product?.productId}>
+                  <td>{product?.productName}</td>
+                  <td>{product?.productDescription}</td>
                   <td>
                     <Button
                       variant="secondary"
@@ -164,25 +141,20 @@ export default function ProductList() {
           </Table>
         </Card.Body>
       </Card>
-      <ModalForm
+      <AddProductModal
         visible={isShowAddModal}
         setVisible={setIsShowAddModal}
         handleSubmit={confirmAdd}
-        controls={getProductControls(selectedProduct)}
-        title="Add new product"
       />
-      <DeleteModal
+      <DeleteProductModal
         visible={isShowDeleteModal}
         setVisible={setIsShowDeleteModal}
-        selectedProduct={selectedProduct}
         handleSubmit={confirmDelete}
       />
-      <ModalForm
+      <EditProductModal
         visible={isShowEditModal}
         setVisible={setIsShowEditModal}
         handleSubmit={confirmEdit}
-        controls={getProductControls(selectedProduct)}
-        title="Edit product"
       />
     </>
   );

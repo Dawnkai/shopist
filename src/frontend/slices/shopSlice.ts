@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { defaultShop, Shop } from '../types/Shop';
+import { defaultShop, Shop } from '../../types/Shop';
 
 type ShopSliceState = {
   selectedShop: Shop;

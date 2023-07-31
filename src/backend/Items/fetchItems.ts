@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Item from '../../frontend/types/Item';
+import { Item } from '../../types/Item';
 import { dbPath } from '../params';
 
 export default async function fetchitems() {
@@ -15,13 +15,15 @@ export default async function fetchitems() {
       db.all(
         `
             SELECT 
-                i.item_id, i.item_quantity, i.item_price, i.item_product, p.product_name,
-                i.item_unit, u.unit_display_name, i.item_shop, s.shop_display_name, i.item_date
-            FROM Items i, Products p, Units u, Shops s 
-            WHERE i.item_product = p.product_id 
-            AND i.item_unit = u.unit_id
-            AND i.item_shop = s.shop_id
-            ORDER BY i.item_date NULLS LAST`,
+                i.itemId, i.itemQuantity, i.itemPrice, i.itemProduct,
+                p.productName as itemProductName, i.itemUnit,
+                u.unitDisplayName as itemUnitDisplayName, i.itemShop,
+                s.shopDisplayName as itemShopDisplayName, i.itemDate
+            FROM Item i, Product p, Unit u, Shop s 
+            WHERE i.itemProduct = p.productId 
+            AND i.itemUnit = u.unitId
+            AND i.itemShop = s.shopId
+            ORDER BY i.itemDate NULLS LAST`,
         (err: any, rows: Item[]) => {
           if (err) {
             reject(err);

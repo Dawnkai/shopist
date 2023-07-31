@@ -2,16 +2,20 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
+import { useSelector } from 'react-redux';
 
-import { DeleteUnitModalProps } from '../../types/DeleteModalProps';
+import { UnitModalProps } from '../../../types/Unit';
+import { RootState } from '../../../main/store';
 
-export default function DeleteModal({
+export default function DeleteUnitModal({
   visible,
   setVisible,
-  selectedUnit,
   handleSubmit,
-}: DeleteUnitModalProps) {
+}: UnitModalProps) {
   const handleClose = () => setVisible(false);
+  const selectedUnit = useSelector(
+    (state: RootState) => state.unit.selectedUnit
+  );
 
   return (
     <Modal show={visible} onHide={handleClose}>
@@ -27,19 +31,19 @@ export default function DeleteModal({
               <td>
                 <b>Name</b>
               </td>
-              <td>{selectedUnit.unit_display_name}</td>
+              <td>{selectedUnit.unitDisplayName}</td>
             </tr>
             <tr>
               <td>
                 <b>Full name</b>
               </td>
-              <td>{selectedUnit.unit_name}</td>
+              <td>{selectedUnit.unitName}</td>
             </tr>
             <tr>
               <td>
                 <b>Numerical value</b>
               </td>
-              <td>{selectedUnit.unit_num}</td>
+              <td>{selectedUnit.unitNum}</td>
             </tr>
           </tbody>
         </Table>
@@ -51,8 +55,7 @@ export default function DeleteModal({
         <Button
           variant="danger"
           onClick={() => {
-            if (selectedUnit?.unit_id !== undefined)
-              handleSubmit(selectedUnit.unit_id);
+            if (selectedUnit?.unitId !== undefined) handleSubmit(selectedUnit);
           }}
         >
           Confirm

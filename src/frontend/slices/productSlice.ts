@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { defaultProduct, Product } from '../types/Product';
+import { defaultProduct, Product } from '../../types/Product';
 
 type ProductSliceState = {
   selectedProduct: Product;

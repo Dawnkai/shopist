@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Item from '../../frontend/types/Item';
+import { Item } from '../../types/Item';
 import { dbPath } from '../params';
 
 export default async function editItem(editedItem: Item) {
@@ -14,21 +14,21 @@ export default async function editItem(editedItem: Item) {
     edited = await new Promise((resolve, reject) => {
       db.run(
         `UPDATE Items SET
-                    item_unit = ?,
-                    item_shop = ?,
-                    item_product = ?,
-                    item_quantity = ?,
-                    item_price = ?,
-                    item_date = ?
-                    WHERE item_id = ?`,
+          itemUnit = ?,
+          itemShop = ?,
+          itemProduct = ?,
+          itemQuantity = ?,
+          itemPrice = ?,
+          itemDate = ?
+        WHERE itemId = ?`,
         [
-          editedItem.item_unit,
-          editedItem.item_shop,
-          editedItem.item_product,
-          editedItem.item_quantity,
-          editedItem.item_price,
-          editedItem.item_date,
-          editedItem.item_id,
+          editedItem.itemUnitId,
+          editedItem.itemShopId,
+          editedItem.itemProductId,
+          editedItem.itemQuantity,
+          editedItem.itemPrice,
+          editedItem.itemDate,
+          editedItem.itemId,
         ],
         (err: any) => {
           if (err) {

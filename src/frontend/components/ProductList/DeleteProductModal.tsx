@@ -2,16 +2,20 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
+import { useSelector } from 'react-redux';
 
-import { DeleteProductModalProps } from '../../types/DeleteModalProps';
+import { ProductModalProps } from '../../../types/Product';
+import { RootState } from '../../../main/store';
 
-export default function DeleteModal({
+export default function DeleteProductModal({
   visible,
   setVisible,
-  selectedProduct,
   handleSubmit,
-}: DeleteProductModalProps) {
+}: ProductModalProps) {
   const handleClose = () => setVisible(false);
+  const selectedProduct = useSelector(
+    (state: RootState) => state.product.selectedProduct
+  );
 
   return (
     <Modal show={visible} onHide={handleClose}>
@@ -27,13 +31,13 @@ export default function DeleteModal({
               <td>
                 <b>Name</b>
               </td>
-              <td>{selectedProduct.product_name}</td>
+              <td>{selectedProduct.productName}</td>
             </tr>
             <tr>
               <td>
                 <b>Description</b>
               </td>
-              <td>{selectedProduct.product_description}</td>
+              <td>{selectedProduct.productDescription}</td>
             </tr>
           </tbody>
         </Table>
@@ -45,8 +49,8 @@ export default function DeleteModal({
         <Button
           variant="danger"
           onClick={() => {
-            if (selectedProduct?.product_id !== undefined)
-              handleSubmit(selectedProduct.product_id);
+            if (selectedProduct?.productId !== undefined)
+              handleSubmit(selectedProduct);
           }}
         >
           Confirm

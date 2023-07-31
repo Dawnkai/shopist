@@ -5,12 +5,11 @@ import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { defaultUnit, Unit } from '../../types/Unit';
+import { defaultUnit, Unit } from '../../../types/Unit';
 
-import ModalForm from '../../ModalForm';
-import DeleteModal from './DeleteModal';
-import getUnitControls from '../ModalControls/getUnitControls';
-import { BasicFormControl, FormControl } from '../../types/ModalProps';
+import AddUnitModal from './AddUnitModal';
+import DeleteUnitModal from './DeleteUnitModal';
+import EditUnitModal from './EditUnitModal';
 
 import { RootState } from '../../../main/store';
 
@@ -23,9 +22,6 @@ import {
 
 export default function UnitList() {
   const units = useSelector((state: RootState) => state.unit.units);
-  const selectedUnit = useSelector(
-    (state: RootState) => state.unit.selectedUnit
-  );
   const dispatch = useDispatch();
 
   const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
@@ -39,16 +35,6 @@ export default function UnitList() {
     window.electron.ipcRenderer.sendMessage('fetch-units', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const extractUnit = (controls: FormControl[]) => {
-    const values = controls.reduce((acc: Unit, { control }) => {
-      acc[(control as BasicFormControl).name] = (
-        control as BasicFormControl
-      ).value;
-      return acc;
-    }, defaultUnit);
-    return values;
-  };
 
   const showAddModal = () => {
     dispatch(setSelectedUnit(defaultUnit));
@@ -65,46 +51,42 @@ export default function UnitList() {
     setIsShowEditModal(true);
   };
 
-  const confirmAdd = (controls: FormControl[]) => {
-    const values = extractUnit(controls);
-    delete values.unit_id;
+  const confirmAdd = (newUnit: Unit) => {
     window.electron.ipcRenderer.once('add-unit', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        values.unit_id = id;
-        dispatch(addUnit(values));
+        newUnit.unitId = id;
+        dispatch(addUnit(newUnit));
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-unit', [values]);
+    window.electron.ipcRenderer.sendMessage('add-unit', [newUnit]);
     setIsShowAddModal(false);
   };
 
-  const confirmDelete = (unitId: number) => {
-    window.electron.ipcRenderer.once('delete-unit', (deleted) => {
-      if (deleted) {
-        dispatch(deleteUnit(unitId));
+  const confirmDelete = (unit: Unit) => {
+    window.electron.ipcRenderer.once('delete-unit', (isDeleted) => {
+      if (isDeleted && unit.unitId) {
+        dispatch(deleteUnit(unit.unitId));
       }
     });
-    window.electron.ipcRenderer.sendMessage('delete-unit', [unitId]);
+    window.electron.ipcRenderer.sendMessage('delete-unit', [unit.unitId]);
     setIsShowDeleteModal(false);
   };
 
-  const confirmEdit = (controls: FormControl[]) => {
-    const values = extractUnit(controls);
-    values.unit_id = selectedUnit.unit_id;
-    window.electron.ipcRenderer.once('edit-unit', (edited) => {
-      if (edited) {
+  const confirmEdit = (editedUnit: Unit) => {
+    window.electron.ipcRenderer.once('edit-unit', (isEdited) => {
+      if (isEdited) {
         const index = units.findIndex(
-          (unit) => unit.unit_id === values.unit_id
+          (unit) => unit.unitId === editedUnit.unitId
         );
         if (index > -1) {
           const unitsCopy = [...units];
-          unitsCopy[index] = values;
+          unitsCopy[index] = editedUnit;
           dispatch(setUnits(unitsCopy));
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-unit', [values]);
+    window.electron.ipcRenderer.sendMessage('edit-unit', [editedUnit]);
     setIsShowEditModal(false);
   };
 
@@ -135,10 +117,10 @@ export default function UnitList() {
             </thead>
             <tbody>
               {units.map((unit) => (
-                <tr key={unit?.unit_id}>
-                  <td>{unit?.unit_display_name}</td>
-                  <td>{unit?.unit_name}</td>
-                  <td>{unit?.unit_num}</td>
+                <tr key={unit?.unitId}>
+                  <td>{unit?.unitDisplayName}</td>
+                  <td>{unit?.unitName}</td>
+                  <td>{unit?.unitNum}</td>
                   <td>
                     <Button
                       variant="secondary"
@@ -159,25 +141,20 @@ export default function UnitList() {
           </Table>
         </Card.Body>
       </Card>
-      <ModalForm
+      <AddUnitModal
         visible={isShowAddModal}
         setVisible={setIsShowAddModal}
         handleSubmit={confirmAdd}
-        controls={getUnitControls(undefined)}
-        title="Add new unit"
       />
-      <DeleteModal
+      <DeleteUnitModal
         visible={isShowDeleteModal}
         setVisible={setIsShowDeleteModal}
-        selectedUnit={selectedUnit}
         handleSubmit={confirmDelete}
       />
-      <ModalForm
+      <EditUnitModal
         visible={isShowEditModal}
         setVisible={setIsShowEditModal}
         handleSubmit={confirmEdit}
-        controls={getUnitControls(selectedUnit)}
-        title="Edit unit"
       />
     </>
   );

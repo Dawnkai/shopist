@@ -2,24 +2,24 @@ import sqlite3
 from csv import reader
 
 # Database filepath
-DATABASE_FILE = 'database.db'
+DATABASE_FILE = '../database.db'
 # Input data, please provide filepath in 'file' and table name to insert data from file to as 'table'
 INPUT = [
     {
         'file': 'units.csv',
-        'table': 'Units'
+        'table': 'Unit'
     },
     {
         'file': 'shops.csv',
-        'table': 'Shops'
+        'table': 'Shop'
     },
     {
         'file': 'products.csv',
-        'table': 'Products'
+        'table': 'Product'
     },
     {
         'file': 'items.csv',
-        'table': 'Items'
+        'table': 'Item'
     }
 ]
 # Delimiter separating values in csv files

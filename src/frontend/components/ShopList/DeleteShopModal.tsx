@@ -2,16 +2,20 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
+import { useSelector } from 'react-redux';
 
-import { DeleteShopModalProps } from '../../types/DeleteModalProps';
+import { ShopModalProps } from '../../../types/Shop';
+import { RootState } from '../../../main/store';
 
-export default function DeleteModal({
+export default function DeleteShopModal({
   visible,
   setVisible,
-  selectedShop,
   handleSubmit,
-}: DeleteShopModalProps) {
+}: ShopModalProps) {
   const handleClose = () => setVisible(false);
+  const selectedShop = useSelector(
+    (state: RootState) => state.shop.selectedShop
+  );
 
   return (
     <Modal show={visible} onHide={handleClose}>
@@ -27,25 +31,25 @@ export default function DeleteModal({
               <td>
                 <b>Name</b>
               </td>
-              <td>{selectedShop.shop_display_name}</td>
+              <td>{selectedShop.shopDisplayName}</td>
             </tr>
             <tr>
               <td>
                 <b>Full name</b>
               </td>
-              <td>{selectedShop.shop_name}</td>
+              <td>{selectedShop.shopName}</td>
             </tr>
             <tr>
               <td>
                 <b>Description</b>
               </td>
-              <td>{selectedShop.shop_description}</td>
+              <td>{selectedShop.shopDescription}</td>
             </tr>
             <tr>
               <td>
                 <b>Address</b>
               </td>
-              <td>{selectedShop.shop_address}</td>
+              <td>{selectedShop.shopAddress}</td>
             </tr>
           </tbody>
         </Table>
@@ -57,8 +61,7 @@ export default function DeleteModal({
         <Button
           variant="danger"
           onClick={() => {
-            if (selectedShop?.shop_id !== undefined)
-              handleSubmit(selectedShop.shop_id);
+            if (selectedShop?.shopId !== undefined) handleSubmit(selectedShop);
           }}
         >
           Confirm

@@ -11,6 +11,12 @@ export type Item = {
   itemDate: string;
 };
 
+export type ItemModalProps = {
+  visible: boolean;
+  setVisible: (arg: boolean) => void;
+  handleSubmit: (arg: Item) => void;
+};
+
 export const defaultItem: Item = {
   itemId: 0,
   itemQuantity: 0,

@@ -5,14 +5,14 @@ import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { defaultItem, Item } from '../../types/Item';
-import { Product } from '../../types/Product';
-import { Shop } from '../../types/Shop';
-import { Unit } from '../../types/Unit';
+import { defaultItem, Item } from '../../../types/Item';
+import { Product } from '../../../types/Product';
+import { Shop } from '../../../types/Shop';
+import { Unit } from '../../../types/Unit';
 
-import AddModal from './AddModal';
-import DeleteModal from './DeleteModal';
-import EditModal from './EditModal';
+import AddItemModal from './AddItemModal';
+import DeleteItemModal from './DeleteItemModal';
+import EditItemModal from './EditItemModal';
 
 import { RootState } from '../../../main/store';
 
@@ -32,9 +32,6 @@ export default function ItemList() {
   const products = useSelector((state: RootState) => state.product.products);
   const shops = useSelector((state: RootState) => state.shop.shops);
   const units = useSelector((state: RootState) => state.unit.units);
-  const selectedItem = useSelector(
-    (state: RootState) => state.item.selectedItem
-  );
   const dispatch = useDispatch();
 
   const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
@@ -45,11 +42,6 @@ export default function ItemList() {
     window.electron.ipcRenderer.once('fetch-items', (itemsList) => {
       dispatch(setItems(itemsList as Item[]));
     });
-    window.electron.ipcRenderer.sendMessage('fetch-items', []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchModalData = () => {
     window.electron.ipcRenderer.once('fetch-products', (productsList) => {
       dispatch(setProducts(productsList as Product[]));
     });
@@ -59,19 +51,27 @@ export default function ItemList() {
     window.electron.ipcRenderer.once('fetch-units', (unitsList) => {
       dispatch(setUnits(unitsList as Unit[]));
     });
-    window.electron.ipcRenderer.sendMessage('fetch-products', []);
-    window.electron.ipcRenderer.sendMessage('fetch-shops', []);
-    window.electron.ipcRenderer.sendMessage('fetch-units', []);
-  };
+    if (items.length === 0) {
+      window.electron.ipcRenderer.sendMessage('fetch-items', []);
+    }
+    if (products.length === 0) {
+      window.electron.ipcRenderer.sendMessage('fetch-products', []);
+    }
+    if (shops.length === 0) {
+      window.electron.ipcRenderer.sendMessage('fetch-shops', []);
+    }
+    if (units.length === 0) {
+      window.electron.ipcRenderer.sendMessage('fetch-units', []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const showAddModal = () => {
-    fetchModalData();
     setSelectedItem(defaultItem);
     setIsShowAddModal(true);
   };
 
   const showEditModal = (item: Item) => {
-    fetchModalData();
     setSelectedItem(item);
     setIsShowEditModal(true);
   };
@@ -92,10 +92,19 @@ export default function ItemList() {
     window.electron.ipcRenderer.sendMessage('add-item', [newItem]);
     setIsShowAddModal(false);
   };
+  const confirmDelete = (item: Item) => {
+    window.electron.ipcRenderer.once('delete-item', (isDeleted) => {
+      if (isDeleted && item.itemId) {
+        dispatch(deleteItem(item.itemId));
+      }
+    });
+    window.electron.ipcRenderer.sendMessage('delete-item', [item.itemId]);
+    setIsShowDeleteModal(false);
+  };
 
   const confirmEdit = (editedItem: Item) => {
-    window.electron.ipcRenderer.once('edit-item', (edited) => {
-      if (edited) {
+    window.electron.ipcRenderer.once('edit-item', (isEdited) => {
+      if (isEdited) {
         const index = items.findIndex(
           (item) => item.itemId === editedItem.itemId
         );
@@ -108,16 +117,6 @@ export default function ItemList() {
     });
     window.electron.ipcRenderer.sendMessage('edit-item', [editedItem]);
     setIsShowEditModal(false);
-  };
-
-  const confirmDelete = (itemId: number) => {
-    window.electron.ipcRenderer.once('delete-item', (deleted) => {
-      if (deleted) {
-        dispatch(deleteItem(itemId));
-      }
-    });
-    window.electron.ipcRenderer.sendMessage('delete-item', [itemId]);
-    setIsShowDeleteModal(false);
   };
 
   return (
@@ -177,27 +176,19 @@ export default function ItemList() {
           </Table>
         </Card.Body>
       </Card>
-      <AddModal
+      <AddItemModal
         visible={isShowAddModal}
         setVisible={setIsShowAddModal}
-        shops={shops}
-        units={units}
-        products={products}
         handleSubmit={confirmAdd}
       />
-      <DeleteModal
+      <DeleteItemModal
         visible={isShowDeleteModal}
         setVisible={setIsShowDeleteModal}
-        selectedItem={selectedItem}
         handleSubmit={confirmDelete}
       />
-      <EditModal
+      <EditItemModal
         visible={isShowEditModal}
         setVisible={setIsShowEditModal}
-        selectedItem={selectedItem}
-        shops={shops}
-        units={units}
-        products={products}
         handleSubmit={confirmEdit}
       />
     </>

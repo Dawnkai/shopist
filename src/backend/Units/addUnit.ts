@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Unit from '../../frontend/types/Unit';
+import { Unit } from '../../types/Unit';
 
 import { dbPath } from '../params';
 
@@ -14,7 +14,7 @@ export default async function addUnit(newUnit: Unit) {
   try {
     newId = await new Promise((resolve, reject) => {
       db.run(
-        'INSERT INTO Units(unit_display_name, unit_name, unit_num) VALUES(?,?,?)',
+        'INSERT INTO Unit(unitDisplayName, unitName, unitNum) VALUES(?,?,?)',
         Object.values(newUnit),
         // eslint-disable-next-line func-names
         function (this: sqlite3.RunResult, err: any) {

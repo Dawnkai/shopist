@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Shop from '../../frontend/types/Shop';
+import { Shop } from '../../types/Shop';
 import { dbPath } from '../params';
 
 export default async function editShop(editedShop: Shop) {
@@ -13,12 +13,12 @@ export default async function editShop(editedShop: Shop) {
   try {
     edited = await new Promise((resolve, reject) => {
       db.run(
-        `UPDATE Shops SET 
-                    shop_display_name = ?,
-                    shop_name = ?,
-                    shop_description = ?,
-                    shop_address = ? 
-                    WHERE shop_id = ?`,
+        `UPDATE Shop SET 
+          shopDisplayName = ?,
+          shopName = ?,
+          shopDescription = ?,
+          shopAddress = ? 
+        WHERE shopId = ?`,
         [
           editedShop.shop_display_name,
           editedShop.shop_name,

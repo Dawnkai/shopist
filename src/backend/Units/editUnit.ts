@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Unit from '../../frontend/types/Unit';
+import { Unit } from '../../types/Unit';
 import { dbPath } from '../params';
 
 export default async function editUnit(editedUnit: Unit) {
@@ -13,8 +13,9 @@ export default async function editUnit(editedUnit: Unit) {
   try {
     edited = await new Promise((resolve, reject) => {
       db.run(
-        `UPDATE Units SET unit_display_name = ?, unit_name = ?, unit_num = ? 
-                    WHERE unit_id = ?`,
+        `UPDATE Unit SET
+          unitDisplayName = ?, unitName = ?, unitNum = ? 
+        WHERE unitId = ?`,
         [
           editedUnit.unit_display_name,
           editedUnit.unit_name,

@@ -16,15 +16,17 @@ export default async function exportItems() {
 
   const items = await fetchItems();
   items.forEach((item, index) => {
-    ws.cell(index + 2, 1).number(item.item_id);
-    ws.cell(index + 2, 2).string(item.product_name ? item.product_name : '');
-    ws.cell(index + 2, 3).number(item.item_quantity);
-    ws.cell(index + 2, 4).string(
-      item.unit_display_name ? item.unit_display_name : ''
+    ws.cell(index + 2, 1).number(item.itemId);
+    ws.cell(index + 2, 2).string(
+      item.itemProductName ? item.itemProductName : ''
     );
-    ws.cell(index + 2, 5).number(item.item_price);
+    ws.cell(index + 2, 3).number(item.itemQuantity);
+    ws.cell(index + 2, 4).string(
+      item.itemUnitDisplayName ? item.itemUnitDisplayName : ''
+    );
+    ws.cell(index + 2, 5).number(item.itemPrice);
     ws.cell(index + 2, 6).string(
-      item.shop_display_name ? item.shop_display_name : ''
+      item.itemShopDisplayName ? item.itemShopDisplayName : ''
     );
   });
 

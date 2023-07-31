@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import Nav from 'react-bootstrap/Nav';
-import NavLinkProps from '../../types/NavLinkProps';
+import NavLinkProps from '../../../types/NavLinkProps';
 
 function LinkWithRouter({ href, title }: NavLinkProps) {
   const navigate = useNavigate();

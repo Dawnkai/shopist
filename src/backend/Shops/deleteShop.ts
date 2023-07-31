@@ -13,7 +13,7 @@ export default async function deleteShop(shopId: number) {
 
   try {
     deleted = await new Promise((resolve, reject) => {
-      db.run('DELETE FROM Shops WHERE shop_id = ?', [shopId], (err: any) => {
+      db.run('DELETE FROM Shop WHERE shopId = ?', [shopId], (err: any) => {
         if (err) reject(err);
         else resolve(true);
       });

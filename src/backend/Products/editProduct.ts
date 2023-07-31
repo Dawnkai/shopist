@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Product from '../../frontend/types/Product';
+import { Product } from '../../types/Product';
 
 import { dbPath } from '../params';
 
@@ -14,8 +14,9 @@ export default async function editProduct(editedProduct: Product) {
   try {
     edited = await new Promise((resolve, reject) => {
       db.run(
-        `UPDATE Products SET product_name = ?, product_description = ? 
-                    WHERE product_id = ?`,
+        `UPDATE Product
+        SET productName = ?, productDescription = ? 
+        WHERE productId = ?`,
         [
           editedProduct.product_name,
           editedProduct.product_description,

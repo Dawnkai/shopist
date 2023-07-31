@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { defaultUnit, Unit } from '../types/Unit';
+import { defaultUnit, Unit } from '../../types/Unit';
 
 type UnitSliceState = {
   selectedUnit: Unit;

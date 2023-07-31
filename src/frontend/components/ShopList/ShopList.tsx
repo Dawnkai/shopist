@@ -5,12 +5,11 @@ import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Shop, defaultShop } from '../../types/Shop';
+import { Shop, defaultShop } from '../../../types/Shop';
 
-import DeleteModal from './DeleteModal';
-import { BasicFormControl, FormControl } from '../../types/ModalProps';
-import ModalForm from '../../ModalForm';
-import getShopControls from '../ModalControls/getShopControls';
+import AddShopModal from './AddShopModal';
+import DeleteShopModal from './DeleteShopModal';
+import EditShopModal from './EditShopModal';
 import { RootState } from '../../../main/store';
 
 import {
@@ -22,9 +21,6 @@ import {
 
 export default function ShopList() {
   const shops = useSelector((state: RootState) => state.shop.shops);
-  const selectedShop = useSelector(
-    (state: RootState) => state.shop.selectedShop
-  );
   const dispatch = useDispatch();
 
   const [isShowAddModal, setIsShowAddModal] = useState<boolean>(false);
@@ -38,16 +34,6 @@ export default function ShopList() {
     window.electron.ipcRenderer.sendMessage('fetch-shops', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const extractShop = (controls: FormControl[]) => {
-    const values = controls.reduce((acc: Shop, { control }) => {
-      acc[(control as BasicFormControl).name] = (
-        control as BasicFormControl
-      ).value;
-      return acc;
-    }, defaultShop);
-    return values;
-  };
 
   const showAddModal = () => {
     dispatch(setSelectedShop(defaultShop));
@@ -64,46 +50,42 @@ export default function ShopList() {
     setIsShowDeleteModal(true);
   };
 
-  const confirmAdd = (controls: FormControl[]) => {
-    const values = extractShop(controls);
-    delete values.shop_id;
+  const confirmAdd = (newShop: Shop) => {
     window.electron.ipcRenderer.once('add-shop', (newId) => {
       const id = newId as number;
       if (id > -1) {
-        values.shop_id = id;
-        dispatch(addShop(values));
+        newShop.shopId = id;
+        dispatch(addShop(newShop));
       }
     });
-    window.electron.ipcRenderer.sendMessage('add-shop', [values]);
+    window.electron.ipcRenderer.sendMessage('add-shop', [newShop]);
     setIsShowAddModal(false);
   };
 
-  const confirmEdit = (controls: FormControl[]) => {
-    const values = extractShop(controls);
-    values.shop_id = selectedShop.shop_id;
-    window.electron.ipcRenderer.once('edit-shop', (edited) => {
-      if (edited) {
+  const confirmEdit = (editedShop: Shop) => {
+    window.electron.ipcRenderer.once('edit-shop', (isEdited) => {
+      if (isEdited) {
         const index = shops.findIndex(
-          (shop) => shop.shop_id === values.shop_id
+          (product) => product.productId === editedShop.productId
         );
         if (index > -1) {
           const shopsCopy = [...shops];
-          shopsCopy[index] = values;
+          shopsCopy[index] = editedShop;
           dispatch(setShops(shopsCopy));
         }
       }
     });
-    window.electron.ipcRenderer.sendMessage('edit-shop', [values]);
+    window.electron.ipcRenderer.sendMessage('edit-product', [editedShop]);
     setIsShowEditModal(false);
   };
 
-  const confirmDelete = (shopId: number) => {
-    window.electron.ipcRenderer.once('delete-shop', (deleted) => {
-      if (deleted) {
-        dispatch(deleteShop(shopId));
+  const confirmDelete = (shop: Shop) => {
+    window.electron.ipcRenderer.once('delete-shop', (isDeleted) => {
+      if (isDeleted && shop.shopId) {
+        dispatch(deleteShop(shop.shopId));
       }
     });
-    window.electron.ipcRenderer.sendMessage('delete-shop', [shopId]);
+    window.electron.ipcRenderer.sendMessage('delete-shop', [shop.shopId]);
     setIsShowDeleteModal(false);
   };
 
@@ -135,11 +117,11 @@ export default function ShopList() {
             </thead>
             <tbody>
               {shops.map((shop) => (
-                <tr key={shop?.shop_id}>
-                  <td>{shop?.shop_display_name}</td>
-                  <td>{shop?.shop_name}</td>
-                  <td>{shop?.shop_description}</td>
-                  <td>{shop?.shop_address}</td>
+                <tr key={shop?.shopId}>
+                  <td>{shop?.shopDisplayName}</td>
+                  <td>{shop?.shopName}</td>
+                  <td>{shop?.shopDescription}</td>
+                  <td>{shop?.shopAddress}</td>
                   <td>
                     <Button
                       variant="secondary"
@@ -160,25 +142,20 @@ export default function ShopList() {
           </Table>
         </Card.Body>
       </Card>
-      <ModalForm
+      <AddShopModal
         visible={isShowAddModal}
         setVisible={setIsShowAddModal}
         handleSubmit={confirmAdd}
-        controls={getShopControls(undefined)}
-        title="Add new shop"
       />
-      <DeleteModal
+      <DeleteShopModal
         visible={isShowDeleteModal}
         setVisible={setIsShowDeleteModal}
-        selectedShop={selectedShop}
         handleSubmit={confirmDelete}
       />
-      <ModalForm
+      <EditShopModal
         visible={isShowEditModal}
         setVisible={setIsShowEditModal}
         handleSubmit={confirmEdit}
-        controls={getShopControls(selectedShop)}
-        title="Edit shop"
       />
     </>
   );

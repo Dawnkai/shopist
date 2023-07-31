@@ -1,4 +1,4 @@
-shop_id;shop_display_name;shop_name;shop_description;shop_address
+shopId;shopDisplayName;shopName;shopDescription;shopAddress
 0;'Biedronka';'Biedronka';NULL;NULL
 1;'Lidl';'Lidl';NULL;NULL
 2;'Netto';'Netto';NULL;NULL

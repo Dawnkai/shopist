@@ -19,10 +19,10 @@ import fetchProducts from './Products/fetchProducts';
 import fetchShops from './Shops/fetchShops';
 import fetchUnits from './Units/fetchUnits';
 
-import Item from '../frontend/types/Item';
-import Product from '../frontend/types/Product';
-import Shop from '../frontend/types/Shop';
-import Unit from '../frontend/types/Unit';
+import { Item } from '../types/Item';
+import { Product } from '../types/Product';
+import { Shop } from '../types/Shop';
+import { Unit } from '../types/Unit';
 
 import exportProducts from './Export/exportProducts';
 import exportItems from './Export/exportItems';

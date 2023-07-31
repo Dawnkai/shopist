@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -8,24 +7,30 @@ import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 
-import { EditItemModalProps } from '../../types/EditModalProps';
-import { defaultItem, Item } from '../../types/Item';
+import { useSelector, useDispatch } from 'react-redux';
+import { ItemModalProps } from '../../../types/Item';
+import { RootState } from '../../../main/store';
+import {
+  setItemPrice,
+  setItemProductName,
+  setItemUnitDisplayName,
+  setItemShopDisplayName,
+  setItemDate,
+  setItemQuantity,
+} from '../../slices/itemSlice';
 
-export default function EditModal({
+export default function EditItemModal({
   visible,
   setVisible,
-  selectedItem,
-  shops,
-  units,
-  products,
   handleSubmit,
-}: EditItemModalProps) {
-  const [item, setItem] = useState<Item>(defaultItem);
-
-  useEffect(() => {
-    setItem(selectedItem);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+}: ItemModalProps) {
+  const selectedItem = useSelector(
+    (state: RootState) => state.item.selectedItem
+  );
+  const products = useSelector((state: RootState) => state.product.products);
+  const shops = useSelector((state: RootState) => state.shop.shops);
+  const units = useSelector((state: RootState) => state.unit.units);
+  const dispatch = useDispatch();
 
   const handleClose = () => setVisible(false);
 
@@ -50,16 +55,12 @@ export default function EditModal({
             <Form.Label>Product</Form.Label>
             <Form.Select
               aria-label="product-select"
-              value={item?.itemProductName}
+              value={selectedItem?.itemProductName}
               name="itemProductName"
-              onChange={(e) =>
-                setItem({ ...item, itemProductName: e.target.value })
-              }
+              onChange={(e) => dispatch(setItemProductName(e.target.value))}
             >
               {products.map((product) => (
-                <option key={product?.product_id}>
-                  {product?.product_name}
-                </option>
+                <option key={product?.productId}>{product?.productName}</option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -70,26 +71,25 @@ export default function EditModal({
                 <Form.Control
                   type="number"
                   name="itemQuantity"
-                  value={item?.itemQuantity}
+                  value={selectedItem?.itemQuantity}
                   onChange={(e) =>
-                    setItem({ ...item, itemQuantity: Number(e.target.value) })
+                    dispatch(setItemQuantity(Number(e.target.value)))
                   }
                 />
                 <DropdownButton
                   variant="outline-secondary"
-                  title={item?.itemUnitDisplayName}
+                  title={selectedItem?.itemUnitDisplayName}
                 >
                   {units.map((unit) => (
                     <Dropdown.Item
                       key={unit?.unit_id}
-                      name="unit_name"
+                      name="itemUnitDisplayName"
                       onClick={(e) => {
                         const value = (e.target as HTMLElement).textContent;
-                        if (value)
-                          setItem({ ...item, itemUnitDisplayName: value });
+                        if (value) dispatch(setItemUnitDisplayName(value));
                       }}
                     >
-                      {unit?.unit_display_name}
+                      {unit?.unitDisplayName}
                     </Dropdown.Item>
                   ))}
                 </DropdownButton>
@@ -102,10 +102,10 @@ export default function EditModal({
                   type="number"
                   step="0.01"
                   lang="en"
-                  name="item_price"
-                  value={item?.itemPrice}
+                  name="itemPrice"
+                  value={selectedItem?.itemPrice}
                   onChange={(e) =>
-                    setItem({ ...item, itemPrice: Number(e.target.value) })
+                    dispatch(setItemPrice(Number(e.target.value)))
                   }
                 />
                 <InputGroup.Text>zł</InputGroup.Text>
@@ -116,14 +116,12 @@ export default function EditModal({
             <Form.Label>Shop</Form.Label>
             <Form.Select
               aria-label="shop-select"
-              value={item?.itemShopDisplayName}
+              value={selectedItem?.itemShopDisplayName}
               name="shop_name"
-              onChange={(e) =>
-                setItem({ ...item, itemShopDisplayName: e.target.value })
-              }
+              onChange={(e) => setItemShopDisplayName(e.target.value)}
             >
               {shops.map((shop) => (
-                <option key={shop?.shop_id}>{shop?.shop_display_name}</option>
+                <option key={shop?.shopId}>{shop?.shopDisplayName}</option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -132,10 +130,8 @@ export default function EditModal({
             <Form.Control
               type="date"
               name="item_date"
-              value={convertDate(item?.itemDate)}
-              onChange={(e) =>
-                setItem({ ...item, itemDate: convertDate(e.target.value) })
-              }
+              value={convertDate(selectedItem?.itemDate)}
+              onChange={(e) => setItemDate(convertDate(e.target.value))}
             />
           </Form.Group>
         </Form>
@@ -144,7 +140,7 @@ export default function EditModal({
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="success" onClick={() => handleSubmit(item)}>
+        <Button variant="success" onClick={() => handleSubmit(selectedItem)}>
           Save Changes
         </Button>
       </Modal.Footer>
