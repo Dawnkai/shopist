@@ -1,4 +1,4 @@
-unit_id;unit_display_name;unit_name;unit_num
+unitId;unitDisplayName;unitName;unitNum
 0;'kg';'kilograms';1
 1;'g';'grams';1
 2;'l';'liters';1

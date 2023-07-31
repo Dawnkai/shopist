@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Unit from '../../types/Unit';
+import { Unit } from '../../types/Unit';
 import { dbPath } from '../params';
 
 export default async function fetchUnits() {
@@ -12,7 +12,7 @@ export default async function fetchUnits() {
 
   try {
     result = await new Promise((resolve, reject) => {
-      db.all('SELECT * FROM Units', (err: any, rows: Unit[]) => {
+      db.all('SELECT * FROM Unit', (err: any, rows: Unit[]) => {
         if (err) reject(err);
         else resolve(rows);
       });

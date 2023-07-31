@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Item from '../../types/Item';
+import { Item } from '../../types/Item';
 import { dbPath } from '../params';
 
 export default async function addItem(newItem: Item) {
@@ -16,15 +16,15 @@ export default async function addItem(newItem: Item) {
     newId = await new Promise((resolve, reject) => {
       db.run(
         `INSERT INTO 
-                    Items(item_unit, item_shop, item_product, item_quantity, item_price, item_date)
+                    Item(itemUnit, itemShop, itemProduct, itemQuantity, itemPrice, itemDate)
                      VALUES(?,?,?,?,?,?)`,
         [
-          newItem.item_unit,
-          newItem.item_shop,
-          newItem.item_product,
-          newItem.item_quantity,
-          newItem.item_price,
-          newItem.item_date,
+          newItem.itemUnitId,
+          newItem.itemShopId,
+          newItem.itemProductId,
+          newItem.itemQuantity,
+          newItem.itemPrice,
+          newItem.itemDate,
         ],
         // eslint-disable-next-line func-names
         function (this: sqlite3.RunResult, err: any) {

@@ -1,4 +1,4 @@
-item_id;item_unit;item_shop;item_product;item_quantity;item_price;item_date
+itemId;itemUnit;itemShop;itemProduct;itemQuantity;itemPrice;itemDate
 0;3;0;0;1;2.69;NULL
 1;2;0;1;1;3.49;NULL
 2;0;1;2;1;6.99;NULL

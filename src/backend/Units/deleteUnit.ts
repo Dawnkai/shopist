@@ -11,7 +11,7 @@ export default async function deleteUnit(unitId: number) {
 
   try {
     deleted = await new Promise((resolve, reject) => {
-      db.run('DELETE FROM Units WHERE unit_id = ?', [unitId], (err: any) => {
+      db.run('DELETE FROM Unit WHERE unitId = ?', [unitId], (err: any) => {
         if (err) reject(err);
         else resolve(true);
       });

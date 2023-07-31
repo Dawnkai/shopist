@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Shop from '../../types/Shop';
+import { Shop } from '../../types/Shop';
 import { dbPath } from '../params';
 
 export default async function addShop(newShop: Shop) {
@@ -13,8 +13,10 @@ export default async function addShop(newShop: Shop) {
   try {
     newId = await new Promise((resolve, reject) => {
       db.run(
-        `INSERT INTO Shops(shop_display_name, shop_name, shop_description, shop_address)
-                     VALUES(?,?,?,?)`,
+        `INSERT INTO Shop (
+          shopDisplayName, shopName, shopDescription, shopAddress
+        )
+        VALUES(?,?,?,?)`,
         Object.values(newShop),
         // eslint-disable-next-line func-names
         function (this: sqlite3.RunResult, err: any) {

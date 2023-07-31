@@ -1,14 +1,28 @@
-type Item = {
-  item_id?: number;
-  item_quantity: number;
-  item_price: number;
-  item_product?: number;
-  product_name: string;
-  item_unit?: number;
-  unit_display_name: string;
-  item_shop?: number;
-  shop_display_name: string;
-  item_date: string;
+export type Item = {
+  itemId?: number;
+  itemQuantity: number;
+  itemPrice: number;
+  itemProductId?: number;
+  itemProductName: string;
+  itemUnitId?: number;
+  itemUnitDisplayName: string;
+  itemShopId?: number;
+  itemShopDisplayName: string;
+  itemDate: string;
 };
 
-export default Item;
+export type ItemModalProps = {
+  visible: boolean;
+  setVisible: (arg: boolean) => void;
+  handleSubmit: (arg: Item) => void;
+};
+
+export const defaultItem: Item = {
+  itemId: 0,
+  itemQuantity: 0,
+  itemPrice: 0,
+  itemProductName: '',
+  itemUnitDisplayName: '',
+  itemShopDisplayName: '',
+  itemDate: new Date().toJSON().slice(0, 10).toString(),
+};

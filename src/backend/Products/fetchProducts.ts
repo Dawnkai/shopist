@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 
-import Product from '../../types/Product';
+import { Product } from '../../types/Product';
 import { dbPath } from '../params';
 
 export default async function fetchProducts() {
@@ -14,7 +14,7 @@ export default async function fetchProducts() {
 
   try {
     result = await new Promise((resolve, reject) => {
-      db.all('SELECT * FROM Products', (err: any, rows: Product[]) => {
+      db.all('SELECT * FROM Product', (err: any, rows: Product[]) => {
         if (err) reject(err);
         else resolve(rows);
       });

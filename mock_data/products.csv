@@ -1,4 +1,4 @@
-product_id;product_name;product_description
+productId;productName;productDescription
 0;'Bread';NULL
 1;'Milk';NULL
 2;'Cereal';NULL

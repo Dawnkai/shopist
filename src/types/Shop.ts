@@ -1,10 +1,22 @@
-type Shop = {
-  shop_id?: number;
-  shop_display_name: string;
-  shop_name: string;
-  shop_description: string;
-  shop_address: string;
+export type Shop = {
+  shopId?: number;
+  shopDisplayName: string;
+  shopName: string;
+  shopDescription: string;
+  shopAddress: string;
   [key: string]: any;
 };
 
-export default Shop;
+export type ShopModalProps = {
+  visible: boolean;
+  setVisible: (arg: boolean) => void;
+  handleSubmit: (arg: Shop) => void;
+};
+
+export const defaultShop: Shop = {
+  shopId: 0,
+  shopDisplayName: '',
+  shopName: '',
+  shopDescription: '',
+  shopAddress: '',
+};
